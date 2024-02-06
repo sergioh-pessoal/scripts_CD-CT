@@ -32,11 +32,11 @@ case ${version} in
    6) vlabel="v6.31";;
 esac
 
-export DIRroot=$(pwd)
-export MONAN_SRC_DIR=${DIRroot}/MONAN_src
-export MONANDIR=${MONAN_SRC_DIR}/MONAN-Model_${vlabel}_egeon.gnu940
-export CONVERT_MPAS_DIR=${MONAN_SRC_DIR}/convert_mpas
-export MONAN_EXEC_DIR=${DIRroot}/MONAN/exec
+export DIRroot=$(pwd)                                                #CR: DIRWORK
+export MONAN_SRC_DIR=${DIRroot}/MONAN_src                            #CR: SOURCES
+export MONANDIR=${MONAN_SRC_DIR}/MONAN-Model_${vlabel}_egeon.gnu940  #CR: SOURCES/MONAN-Model_${vlabel}
+export CONVERT_MPAS_DIR=${MONAN_SRC_DIR}/convert_mpas                #CR: SOURCES/convert_mpas 
+export MONAN_EXEC_DIR=${DIRroot}/MONAN/exec                          #CR: EXECS
 mkdir -p ${MONAN_EXEC_DIR}
 mkdir -p ${MONAN_SRC_DIR}
 mkdir -p ${CONVERT_MPAS_DIR}
@@ -188,6 +188,9 @@ else
     echo -e "${RED}==>${NC} !!! An error occurred during convert_mpas build. Check output"
     exit -1
 fi
+
+
+#CR: migracao parei aqui----------------------------------
 
 echo -e  "${GREEN}==>${NC} Copying and decompressing all data for preprocessing... \n"
 echo -e  "${GREEN}==>${NC} It may take several minutes...\n"
