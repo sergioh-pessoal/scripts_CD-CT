@@ -134,17 +134,80 @@ fi
 EOF
 chmod a+x make-all.sh
 
+cat << EOF > make.sh
+#!/bin/bash
+#Usage: make target CORE=[core] [options]
+#Example targets:
+#    ifort
+#    gfortran
+#    xlf
+#    pgi
+#Availabe Cores:
+#    atmosphere
+#    init_atmosphere
+#    landice
+#    ocean
+#    seaice
+#    sw
+#    test
+#Available Options:
+#    DEBUG=true    - builds debug version. Default is optimized version.
+#    USE_PAPI=true - builds version using PAPI for timers. Default is off.
+#    TAU=true      - builds version using TAU hooks for profiling. Default is off.
+#    AUTOCLEAN=true    - forces a clean of infrastructure prior to build new core.
+#    GEN_F90=true  - Generates intermediate .f90 files through CPP, and builds with them.
+#    TIMER_LIB=opt - Selects the timer library interface to be used for profiling the model. Options are:
+#                    TIMER_LIB=native - Uses native built-in timers in MPAS
+#                    TIMER_LIB=gptl - Uses gptl for the timer interface instead of the native interface
+#                    TIMER_LIB=tau - Uses TAU for the timer interface instead of the native interface
+#    OPENMP=true   - builds and links with OpenMP flags. Default is to not use OpenMP.
+#    OPENACC=true  - builds and links with OpenACC flags. Default is to not use OpenACC.
+#    USE_PIO2=true - links with the PIO 2 library. Default is to use the PIO 1.x library.
+#    PRECISION=single - builds with default single-precision real kind. Default is to use double-precision.
+#    SHAREDLIB=true - generate position-independent code suitable for use in a shared library. Default is false.
+
+
+export NETCDF=${NETCDFDIR}
+export PNETCDF=${PNETCDFDIR}
+# PIO is not necessary for version 8.* If PIO is empty, MPAS Will use SMIOL
+export PIO=
+
+
+make clean CORE=atmosphere
+make -j 8 gfortran CORE=atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee make-all.output
+
+#CR: TODO: put verify here if executable was created ok
+mv ${MONANDIR}/atmosphere_model ${EXECS}
+mv ${MONANDIR}/build_tables ${EXECS}
+make clean CORE=atmosphere
+
+if  [ -e "${EXECS}/atmosphere_model" ]; then
+    echo ""
+    echo -e "${GREEN}==>${NC} Files init_atmosphere_model and atmosphere_model generated Successfully in ${EXECS} !"
+    echo
+else
+    echo -e "${RED}==>${NC} !!! An error occurred during build. Check output"
+    exit -1
+fi
+
+EOF
+chmod a+x make.sh
+
+
 echo ""
 echo -e  "${GREEN}==>${NC} Installing init_atmosphere_model and atmosphere_model...\n"
 echo ""
 
 #CR: TODO: maybe at this point we should put our registry-file et all.
-#CR: TODO: we should make a simple version script for just compile the existing A-model:
 #CR: make-all.sh compile all for the first time
 #CR: make.sh just compile  the A-model
 . ${MONANDIR}/make-all.sh
 
 
+
+
+
+# install convert_mpas
 
 
 echo ""
@@ -186,9 +249,9 @@ else
 fi
 
 
-#CR: migracao parei aqui--------------------------
 exit
 
+#CR: this should be done in pre-processing fase, not here---
 echo -e  "${GREEN}==>${NC} Copying and decompressing all data for preprocessing... \n"
 echo -e  "${GREEN}==>${NC} It may take several minutes...\n"
 tar -xzf ${DIRDADOS}/MONAN_data_v1.0.tgz -C ${DIRMONAN}
