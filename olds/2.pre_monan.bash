@@ -61,7 +61,7 @@ export FCST=${4}
 . ./load_monan_app_modules.sh
 source ${DIRMONAN_SCR}/generic_funcs_and_variables.sh
 
-datai=${LABELI}
+datai=${LABELI}   #CR: na migracao -> yyyymmddhhi
 echo ${datai}
 
 # add FCST to datai
@@ -79,24 +79,30 @@ echo
 
 #----------------------------------
 
-mkdir -p ${DIRMONAN}/logs 
-mkdir -p ${DIRMONAN}/namelist 
-mkdir -p ${DIRMONAN}/tar
+echo "mkdir -p ${DIRMONAN}/logs    "  #CR: na migracao -> 
+echo "mkdir -p ${DIRMONAN}/namelist " #CR: na migracao ->
+echo "mkdir -p ${DIRMONAN}/tar      " #CR: na migracao ->
 
 #----------------------------------
 
 
+#CR: migracao: MONAN_testcase_GFS.v1.0.tgz (X1.graph.part.ncores e tables) migrado em datain/fixed
 echo -e  "${GREEN}==>${NC} Copying and decompressing testcase data... \n"
-tar -xzf ${DIRDADOS}/MONAN_testcase_GFS.v1.0.tgz -C ${DIRroot}
+echo "tar -xzf ${DIRDADOS}/MONAN_testcase_GFS.v1.0.tgz -C ${DIRroot}"
 
+
+#CR: migracao: todos os scripts fornecidos e utilizados testcase/scripts serao versionados no novo diretorio pricipal scripts 
 echo -e  "${GREEN}==>${NC} Copyings scripts from repository to MONAN testcase script folders... \n"
-cp -rf ${DIRMONAN_SCR}/* ${DIRMONAN}/testcase/scripts/
+echo "cp -rf ${DIRMONAN_SCR}/* ${DIRMONAN}/testcase/scripts/"
 
+#CR: migracao: DIRMONAN_NML=${DIRroot}/namelist -> datain/namelists
 echo -e  "${GREEN}==>${NC} Copyings scripts from repository to MONAN testcase namelist folders... \n"
-cp -rf ${DIRMONAN_NML}/* ${DIRMONAN}/testcase/namelist/
+echo "cp -rf ${DIRMONAN_NML}/* ${DIRMONAN}/testcase/namelist/"
 
+#CR: migracao:  ${DIRMONAN_NCL}/* nao encontrado ate agora
 echo -e  "${GREEN}==>${NC} Copyings scripts from repository to MONAN testcase NCL folders... \n"
-cp -rf ${DIRMONAN_NCL}/* ${DIRMONAN}/testcase/NCL/
+echo "cp -rf ${DIRMONAN_NCL}/* ${DIRMONAN}/testcase/NCL/"
+
 
 
 
@@ -122,6 +128,8 @@ else
 
 fi
 
+CR: migracao parei aqui
+exit
 
 
 echo -e  "${GREEN}==>${NC} Creating submition scripts degrib, atmosphere_model...\n"

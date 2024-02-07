@@ -39,6 +39,10 @@ export NETCDFDIR=${NETCDF}
 export PNETCDFDIR=${PNETCDF}
 export DIRDADOS=/mnt/beegfs/monan/dados/MONAN_v0.1.0
 
+
+# Submiting variables:
+export STATIC_QUEUE=bathc
+
 # Colors:
 export GREEN='\033[1;32m'  # Green
 export RED='\033[1;31m'    # Red

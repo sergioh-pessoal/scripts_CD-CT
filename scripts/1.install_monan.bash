@@ -18,24 +18,29 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 . setenv.bash
 
 
-# Standart directories variables:
+# Standart directories variables:---------------------------------------
 DIRHOME=${DIRWORK}/../../MONAN;   rm -fr ${DIRHOME}; mkdir -p ${DIRHOME}  #CR: Remove rmdir after all is developed (or not?)!
 SCRIPTS=${DIRHOME}/scripts;   mkdir -p ${SCRIPTS}
 DATAIN=${DIRHOME}/datain;     mkdir -p ${DATAIN}
 DATAOUT=${DIRHOME}/dataout;   mkdir -p ${DATAOUT}
 SOURCES=${DIRHOME}/sources;   mkdir -p ${SOURCES}
 EXECS=${DIRHOME}/execs;       mkdir -p ${EXECS}
+#----------------------------------------------------------------------
 
 
-# Local variables
+# Local variables:-----------------------------------------------------
 vlabel="v0.1.0"
 MONANDIR=${SOURCES}/MONAN-Model_${vlabel}
 CONVERT_MPAS_DIR=${SOURCES}/convert_mpas
 branch_name="develop"
+#----------------------------------------------------------------------
 
-# Input variables:
+
+
+# Input variables:-----------------------------------------------------
 github_link=${1}
 github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
+#----------------------------------------------------------------------
 
 
 
