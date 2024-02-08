@@ -45,16 +45,16 @@ function usage(){
 
 if [ $# -ne 4 ]; then
    usage
-   exit 1
+#   exit 1
 fi
 
 #
 # pegando argumentos
 #
-export EXP=${1}
-export RES=${2}
-export LABELI=${3} 
-export FCST=${4}
+export EXP=${1};      EXP=GFS
+export RES=${2};      RES=1024002
+export LABELI=${3};   LABELI=2024010100 
+export FCST=${4};     FCST=24
 
 #----------------------------------
 
@@ -109,12 +109,12 @@ echo "cp -rf ${DIRMONAN_NCL}/* ${DIRMONAN}/testcase/NCL/"
 if [ ! -e ${DIRMONAN}/testcase/runs/${EXP}/static/x1.${RES}.static.nc ]; then
 
   echo -e  "${GREEN}==>${NC} Creating make_static.sh for submiting init_atmosphere...\n"
-  cd ${DIRMONAN}/testcase/scripts
-  ${DIRMONAN}/testcase/scripts/static.sh ${EXP} ${RES}
-
+  echo "cd ${DIRMONAN}/testcase/scripts"
+  echo "${DIRMONAN}/testcase/scripts/static.sh ${EXP} ${RES}"
+   exit
   echo -e  "${GREEN}==>${NC} Executing sbatch make_static.sh...\n"
-  cd ${DIRMONAN}/testcase/runs/${EXP}/static
-  sbatch --wait make_static.sh
+  echo "cd ${DIRMONAN}/testcase/runs/${EXP}/static"
+  echo "sbatch --wait make_static.sh"
 
   if [ ! -e x1.${RES}.static.nc ]; then
     echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	
