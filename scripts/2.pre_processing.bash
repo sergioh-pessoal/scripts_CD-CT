@@ -87,75 +87,24 @@ final_date=${yyyymmddhhf:0:4}-${yyyymmddhhf:4:2}-${yyyymmddhhf:6:2}_${yyyymmddhh
 # Untar the fixed files:
 # x1.${RES}.graph.info.part.<Ncores> files can be found in datain/fixed
 # *.TBL files can be found in datain/fixed
-# namelists files marked with TEMPLATE can be found in datain/namelists
 # x1.${RES}.grid.nc can be found in datain/fixed
 echo -e  "${GREEN}==>${NC} Copying and decompressing input data... \n"
-tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOME}
+#tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOME}
+# namelists files marked with TEMPLATE can be found in datain/namelists
+# those files are copied from versined main diretory scripts_CD-CT/namelists
+mkdir -p ${DATAIN}/namelists
+cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 
 
-
-# Creating the x1.${RES}.static.nc file: -----------------------------------------------
-#CR: maybe put this part in a separete script, and just use it if so
-echo -e "${GREEN}==>${NC} Creating static.bash for submiting init_atmosphere...\n"
-cores=32
-mkdir -p ${DATAOUT}/logs
-rm -f ${SCRIPTS}/static.bash 
-cat << EOF0 > ${SCRIPTS}/static.bash 
-#!/bin/bash
-#SBATCH --job-name=static
-#SBATCH --nodes=1 
-#SBATCH --ntasks=${cores}             
-#SBATCH --tasks-per-node=${cores}  
-#SBATCH --partition=${STATIC_QUEUE}
-#SBATCH --time=02:00:00        
-#SBATCH --output=${DATAOUT}/logs/static.bash.o%j    # File name for standard output
-#SBATCH --error=${DATAOUT}/logs/static.bash.e%j     # File name for standard error output
-#SBATCH --mem=500000
-
-
-executable=init_atmosphere_model
-
-ulimit -s unlimited
-ulimit -c unlimited
-ulimit -v unlimited
-
-. ${SCRIPTS}/setenv.bash
-
-cd ${SCRIPTS}
-
-date
-time mpirun -np \$SLURM_NTASKS -env UCX_NET_DEVICES=mlx5_0:1 -genvall ./\${executable}
-date
-
-grep "Finished running" log.init_atmosphere.0000.out >& /dev/null
-if [ \$? -ne 0 ]; then
-   echo "  BUMMER: Static generation failed for some yet unknown reason."
-   echo " "
-   tail -10 ${STATICPATH}/log.init_atmosphere.0000.out
-   echo " "
-   exit 21
+# Creating the x1.${RES}.static.nc file once, if does not exist yet:---------------
+if [ ! -s ${DATAIN}/fixed/x1.${RES}.static.nc ]
+then
+   echo -e "${GREEN}==>${NC} Creating static.bash for submiting init_atmosphere to create x1.${RES}.static.nc...\n"
+   ./make_static.bash ${RES}
+else
+   echo -e "${GREEN}==>${NC} File x1.${RES}.static.nc already exist in ${DATAIN}/fixed.\n"
 fi
-
-echo "  ####################################"
-echo "  ### Static completed - \$(date) ####"
-echo "  ####################################"
-echo " "
-
-#
-# clean up and remove links
-#
-
-mv log.init_atmosphere.0000.out ${DATAOUT}/logs
-
-#find ${STATICPATH} -maxdepth 1 -type l -exec rm -f {} \;
-
-#CR: parei aqui. Proximo passo: tasnformar a fase do static num script separado e usa-lo nesse ponto.
-Dai precisa refazer os links do velho static.sh no novo script separado.
-
-
-EOF0
-chmod a+x ${SCRIPTS}/static.bash
-#-------------------------------------------------------
+#----------------------------------------------------------------------------------
 
 
 
