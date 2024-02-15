@@ -128,8 +128,6 @@ else
 
 fi
 
-CR: migracao parei aqui
-exit
 
 
 echo -e  "${GREEN}==>${NC} Creating submition scripts degrib, atmosphere_model...\n"
@@ -137,6 +135,8 @@ cd ${DIRMONAN}/testcase/scripts
 ${DIRMONAN}/testcase/scripts/run_monan_gnu_egeon.bash ${EXP} ${RES} ${datai} ${FCST} ${dataf}
 
 
+CR: migracao parei aqui 15/02/24
+exit
 
 echo -e  "${GREEN}==>${NC} Submiting degrib_exe.sh...\n"
 mkdir -p ${HOME}/local/lib64

@@ -11,9 +11,9 @@
 #        o Ungrib GFS data
 #        o Interpolates to model the grid
 #        o Creates initial and boundary conditions
-#        o Creates scripts to run the model and post-processing (CR: to be modified to fase 3 and 4)
-#        o Integrates the MONAN model ((CR: to be modified to fase 3)
-#        o Post-processing (netcdf for grib2, latlon regrid, crop) (CR: to be modified to fase 4)
+#        o Creates scripts to run the model and post-processing (CR: to be modified to phase 3 and 4)
+#        o Integrates the MONAN model ((CR: to be modified to phase 3)
+#        o Post-processing (netcdf for grib2, latlon regrid, crop) (CR: to be modified to phase 4)
 #
 #-----------------------------------------------------------------------------#
 
@@ -109,6 +109,16 @@ fi
 
 
 
+# Degrib phase:---------------------------------------------------------------------
+echo -e  "${GREEN}==>${NC} Submiting degrib_exe.sh...\n"
+
+CR: migracao parei aqui 15/02/24
+exit
+
+
+
+
+#----------------------------------------------------------------------------------
 
 
 
