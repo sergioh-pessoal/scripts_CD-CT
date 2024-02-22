@@ -45,6 +45,7 @@ export OPERDIR=/oper/dados/ioper/tempo
 # Submiting variables:
 export STATIC_QUEUE=batch
 export DEGRIB_QUEUE=batch
+export INITATMOS_QUEUE=batch
 
 # Colors:
 export GREEN='\033[1;32m'  # Green

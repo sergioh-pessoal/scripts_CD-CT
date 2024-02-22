@@ -135,8 +135,6 @@ cd ${DIRMONAN}/testcase/scripts
 ${DIRMONAN}/testcase/scripts/run_monan_gnu_egeon.bash ${EXP} ${RES} ${datai} ${FCST} ${dataf}
 
 
-CR: migracao parei aqui 15/02/24
-exit
 
 echo -e  "${GREEN}==>${NC} Submiting degrib_exe.sh...\n"
 mkdir -p ${HOME}/local/lib64
@@ -156,10 +154,12 @@ for file in "${files_ungrib[@]}"; do
 done
 
 
-
 echo -e  "${GREEN}==>${NC} Submiting InitAtmos_exe.sh...\n"
 cd ${DIRMONAN}/testcase/runs/${EXP}/${LABELI}
 sbatch --wait InitAtmos_exe.sh
+
+CR: migracao parei aqui 22/02/24
+exit
 
 if [ ! -e x1.${RES}.init.nc ]; then
   echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	

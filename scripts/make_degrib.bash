@@ -148,13 +148,10 @@ for file in "${files_ungrib[@]}"; do
   if [ ! -s ${DATAIN}/${YYYYMMDDHHi}/${file} ] 
   then
     echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	  
-    echo -e  "${RED}==>${NC} Degrib fails ! At least the file ${file} was not generated at ${DATAIN}/${YYYYMMDDHHi}. \n"
+    echo -e  "${RED}==>${NC} Degrib fails! At least the file ${file} was not generated at ${DATAIN}/${YYYYMMDDHHi}. \n"
     echo -e  "${RED}==>${NC} Check logs at ${DATAOUT}/logs/debrib.* .\n"
     echo -e  "${RED}==>${NC} Exiting script. \n"
     exit -1
   fi
 done
 
-
-#CR: migracao parei aqui 22/02/24
-exit

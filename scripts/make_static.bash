@@ -109,7 +109,7 @@ echo " "
 # clean up and remove links
 #
 
-mv log.init_atmosphere.0000.out ${DATAOUT}/logs
+mv log.init_atmosphere.0000.out ${DATAOUT}/logs/log.init_atmosphere.0000.x1.${RES}.static.nc.out
 
 
 EOF0

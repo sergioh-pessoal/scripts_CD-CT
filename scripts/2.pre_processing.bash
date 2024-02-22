@@ -112,14 +112,16 @@ fi
 
 
 # Degrib phase:---------------------------------------------------------------------
-echo -e  "${GREEN}==>${NC} Submiting degrib_exe.sh...\n"
+echo -e  "${GREEN}==>${NC} Submiting Degrib...\n"
 ./make_degrib.bash ${yyyymmddhhi} ${EXP} ${RES}
 
 
 
+# Init Atmosphere phase:------------------------------------------------------------
+echo -e  "${GREEN}==>${NC} Submiting Init Atmosphere...\n"
+./make_initatmos.bash
 
-
-#CR: migracao parei aqui 15/02/24
+#CR: migracao parei aqui 22/02/24
 exit
 
 
