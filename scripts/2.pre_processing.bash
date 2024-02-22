@@ -111,8 +111,13 @@ fi
 
 # Degrib phase:---------------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting degrib_exe.sh...\n"
+./make_degrib.bash ${yyyymmddhhi}
 
-CR: migracao parei aqui 15/02/24
+
+
+
+
+#CR: migracao parei aqui 15/02/24
 exit
 
 

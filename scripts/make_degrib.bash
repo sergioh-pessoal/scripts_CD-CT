@@ -41,6 +41,8 @@ YYYYMMDDHHi=${1};      YYYYMMDDHHi=2024012000
 start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}.00.00
 #-------------------------------------------------------
 
+cp -f ./link_grib.csh ${SCRIPTS}
+
 mkdir -p ${DATAOUT}/logs
 rm -f ${SCRIPTS}/degrib.bash 
 cat << EOF0 > ${SCRIPTS}/degrib.bash 
@@ -102,9 +104,8 @@ fi
    mv ungrib.log ${DATAOUT}/logs/ungrib.${start_date}.log
    mv Timing.degrib ${DATAOUT}/logs
    mv namelist.wps degrib_exe.sh ${DATAOUT}/logs
-   rm -f link_grib.csh # CR: copiar este script para o dir scripts antes de executa-lo e posteriormente apaga-lo
    
-CR: migracao parei aqui 15/02/24
+#CR: migracao parei aqui 15/02/24
 exit
    
    ln -sf wpsprd/GFS\:${start_date:0:13} .
