@@ -38,6 +38,8 @@ export PNETCDF=/mnt/beegfs/monan/libs/PnetCDF
 export NETCDFDIR=${NETCDF}
 export PNETCDFDIR=${PNETCDF}
 export DIRDADOS=/mnt/beegfs/monan/dados/MONAN_v0.1.0
+export OPERDIR=/oper/dados/ioper/tempo
+
 
 
 # Submiting variables:

@@ -1,14 +1,16 @@
 #!/bin/bash 
 
 
-if [ $# -ne 1 ]
+if [ $# -ne 3 ]
 then
    echo ""
    echo "Instructions: execute the command below"
    echo ""
    echo "${0} LABELI"
    echo ""
-   echo "LABELI  :: Initial date, e.g.: 2015030600"
+   echo "LABELI      :: Initial date, e.g.: 2015030600"
+   echo "EXP_NAME    :: Forcing: GFS"
+   echo "RESOLUTION  :: number of points in resolution model grid, e.g: 1024002  (24 km)"
    echo ""
 
 #   exit
@@ -32,16 +34,33 @@ EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 
 
 # Input variables:--------------------------------------
-YYYYMMDDHHi=${1};      YYYYMMDDHHi=2024012000
+YYYYMMDDHHi=${1};    YYYYMMDDHHi=2024012000
+EXP=${2};            EXP=GFS
+RES=${3};            RES=1024002
 #-------------------------------------------------------
 
 
 
 # Local variables--------------------------------------
 start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}.00.00
+OPERDIREXP=${OPERDIR}/${EXP}
+BNDDIR=${OPERDIREXP}/0p25/brutos/${YYYYMMDDHHi:0:4}/${YYYYMMDDHHi:4:2}/${YYYYMMDDHHi:6:2}/${YYYYMMDDHHi:8:2}
 #-------------------------------------------------------
 
+if [ ! -d ${BNDDIR} ]
+then
+   echo -e "${RED}==>${NC}Condicao de contorno inexistente !"
+   echo -e "${RED}==>${NC}Check ${BNDDIR} ." 
+   exit 1                     
+fi
+
+ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
+ln -sf ${DATAIN}/fixed/Vtable.${EXP} ${SCRIPTS}/Vtable
+ln -sf ${EXECS}/ungrib.exe ${SCRIPTS}
 cp -f ./link_grib.csh ${SCRIPTS}
+
+exit
+
 
 mkdir -p ${DATAOUT}/logs
 rm -f ${SCRIPTS}/degrib.bash 

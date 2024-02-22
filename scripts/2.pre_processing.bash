@@ -111,7 +111,7 @@ fi
 
 # Degrib phase:---------------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting degrib_exe.sh...\n"
-./make_degrib.bash ${yyyymmddhhi}
+./make_degrib.bash ${yyyymmddhhi} ${EXP} ${RES}
 
 
 
