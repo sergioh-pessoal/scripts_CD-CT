@@ -41,7 +41,7 @@ branch_name="develop"
 github_link=${1}
 github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
 #----------------------------------------------------------------------
-
+cp -f setenv.bash ${SCRIPTS}
 
 
 

@@ -42,10 +42,16 @@ RES=${3};            RES=1024002
 
 
 # Local variables--------------------------------------
-start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}.00.00
+start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}:00:00
 OPERDIREXP=${OPERDIR}/${EXP}
 BNDDIR=${OPERDIREXP}/0p25/brutos/${YYYYMMDDHHi:0:4}/${YYYYMMDDHHi:4:2}/${YYYYMMDDHHi:6:2}/${YYYYMMDDHHi:8:2}
 #-------------------------------------------------------
+cp -f setenv.bash ${SCRIPTS}
+mkdir -p ${DATAIN}/${YYYYMMDDHHi}
+mkdir -p ${HOME}/local/lib64
+cp -f /usr/lib64/libjasper.so* ${HOME}/local/lib64
+cp -f /usr/lib64/libjpeg.so* ${HOME}/local/lib64
+
 
 if [ ! -d ${BNDDIR} ]
 then
@@ -58,8 +64,8 @@ ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/Vtable.${EXP} ${SCRIPTS}/Vtable
 ln -sf ${EXECS}/ungrib.exe ${SCRIPTS}
 cp -f ./link_grib.csh ${SCRIPTS}
+cp -rf ${BNDDIR}/gfs.t00z.pgrb2.0p25.f000.${YYYYMMDDHHi}.grib2 ${DATAIN}/${YYYYMMDDHHi}
 
-exit
 
 
 mkdir -p ${DATAOUT}/logs
@@ -85,33 +91,30 @@ export PMIX_MCA_gds=hash
 export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:${HOME}/local/lib64
 ldd ungrib.exe
 
-. $(pwd)/setenv.bash
-
 cd ${SCRIPTS}
+. setenv.bash
+
 
 rm -f GRIBFILE.* namelist.wps
 
 
 sed -e "s,#LABELI#,${start_date},g;s,#PREFIX#,GFS,g" \
-	${DATAIN}/fixed/namelist.wps.TEMPLATE > ./namelist.wps
+	${DATAIN}/namelists/namelist.wps.TEMPLATE > ./namelist.wps
 
-./link_grib.csh gfs.t00z.pgrb2.0p25.f000.${YYYYMMDDHHi}.grib2
+./link_grib.csh ${DATAIN}/${YYYYMMDDHHi}/gfs.t00z.pgrb2.0p25.f000.${YYYYMMDDHHi}.grib2
 
 
 date
 time mpirun -np 1 ./ungrib.exe
 date
 
-rm -f GRIBFILE.*
-rm -f gfs.t00z.pgrb2.0p25.f000.${LABELI}.grib2
 
-
-grep "Successful completion of program ungrib.exe" ${DATAOUT}/logs/ungrib.log >& /dev/null
+grep "Successful completion of program ungrib.exe" ${SCRIPTS}/ungrib.log >& /dev/null
 
 if [ \$? -ne 0 ]; then
    echo "  BUMMER: Ungrib generation failed for some yet unknown reason."
    echo " "
-   tail -10 ${DATAOUT}/logs/ungrib.log
+   tail -10 ${SCRIPTS}/ungrib.log
    echo " "
    exit 21
 fi
@@ -119,19 +122,39 @@ fi
 #
 # clean up and remove links
 #
-   mv ungrib.*.log ${DATAOUT}/logs
    mv ungrib.log ${DATAOUT}/logs/ungrib.${start_date}.log
-   mv Timing.degrib ${DATAOUT}/logs
-   mv namelist.wps degrib_exe.sh ${DATAOUT}/logs
-   
-#CR: migracao parei aqui 15/02/24
-exit
-   
-   ln -sf wpsprd/GFS\:${start_date:0:13} .
-   find ${EXPDIR}/wpsprd -maxdepth 1 -type l -exec rm -f {} \;
+   mv namelist.wps ${DATAOUT}/logs/namelist.${start_date}.wps
+   mv GFS\:${start_date:0:13} ${DATAIN}/${YYYYMMDDHHi}
+
+   rm -f ${SCRIPTS}/ungrib.exe 
+   rm -f ${SCRIPTS}/Vtable 
+   rm -f ${SCRIPTS}/x1.1024002.static.nc
+   rm -f ${SCRIPTS}/GRIBFILE.AAA
 
 echo "End of degrib Job"
 
 
 EOF0
 chmod a+x ${SCRIPTS}/degrib.bash
+
+echo -e  "${GREEN}==>${NC} Executing sbatch degrib.bash...\n"
+cd ${SCRIPTS}
+sbatch --wait ${SCRIPTS}/degrib.bash
+
+
+
+files_ungrib=("${EXP}:${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}")
+for file in "${files_ungrib[@]}"; do
+  if [ ! -s ${DATAIN}/${YYYYMMDDHHi}/${file} ] 
+  then
+    echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	  
+    echo -e  "${RED}==>${NC} Degrib fails ! At least the file ${file} was not generated at ${DATAIN}/${YYYYMMDDHHi}. \n"
+    echo -e  "${RED}==>${NC} Check logs at ${DATAOUT}/logs/debrib.* .\n"
+    echo -e  "${RED}==>${NC} Exiting script. \n"
+    exit -1
+  fi
+done
+
+
+#CR: migracao parei aqui 22/02/24
+exit

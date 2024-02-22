@@ -69,6 +69,8 @@ RES=${2};      RES=1024002
 LABELI=${3};   LABELI=2024010100 
 FCST=${4};     FCST=24
 #-------------------------------------------------------
+cp -f setenv.bash ${SCRIPTS}
+
 
 # Calculating CIs and final forecast dates in model namelist format:
 yyyymmddhhi=${LABELI}

@@ -40,6 +40,7 @@ cores=32
 # Input variables:--------------------------------------
 RES=${1};      RES=1024002
 #-------------------------------------------------------
+cp -f setenv.bash ${SCRIPTS}
 
 
 #CR: TODO: important verify if exist each file below:
@@ -115,7 +116,7 @@ EOF0
 chmod a+x ${SCRIPTS}/static.bash
 
 
-echo -e  "${GREEN}==>${NC} Executing sbatch make_static.sh...\n"
+echo -e  "${GREEN}==>${NC} Executing sbatch static.bash...\n"
 cd ${SCRIPTS}
 sbatch --wait ${SCRIPTS}/static.bash
 
