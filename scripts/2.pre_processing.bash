@@ -121,8 +121,6 @@ echo -e  "${GREEN}==>${NC} Submiting Degrib...\n"
 echo -e  "${GREEN}==>${NC} Submiting Init Atmosphere...\n"
 ./make_initatmos.bash
 
-#CR: migracao parei aqui 22/02/24
-exit
 
 
 

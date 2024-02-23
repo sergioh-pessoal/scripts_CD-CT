@@ -42,10 +42,35 @@ export OPERDIR=/oper/dados/ioper/tempo
 
 
 
-# Submiting variables:
+# Submiting variables:--------------------------------------------------
+
+# Static phase:
 export STATIC_QUEUE=batch
+export STATIC_ncores=
+export STATIC_nnodes=
+export STATIC_ncpn=
+
+# Degrib phase:
 export DEGRIB_QUEUE=batch
+export DEGRIB_ncores=
+export DEGRIB_nnodes=
+export DEGRIB_ncpn=
+
+# Init Atmosphere phase:
 export INITATMOS_QUEUE=batch
+export INITATMOS_ncores=
+export INITATMOS_nnodes=
+export INITATMOS_ncpn=
+
+# Model phase:
+export MODEL_QUEUE=batch
+export MODEL_ncores=
+export MODEL_nnodes=
+export MODEL_ncpn=
+#-----------------------------------------------------------------------
+
+
+
 
 # Colors:
 export GREEN='\033[1;32m'  # Green

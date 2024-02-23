@@ -158,8 +158,6 @@ echo -e  "${GREEN}==>${NC} Submiting InitAtmos_exe.sh...\n"
 cd ${DIRMONAN}/testcase/runs/${EXP}/${LABELI}
 sbatch --wait InitAtmos_exe.sh
 
-CR: migracao parei aqui 22/02/24
-exit
 
 if [ ! -e x1.${RES}.init.nc ]; then
   echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	
@@ -172,6 +170,9 @@ echo -e  "${GREEN}==>${NC} Submitting MONAN and waiting for finish before exit .
 echo -e  "${GREEN}==>${NC} Logs being generated at ${DIRMONAN}/testcase/runs/${EXP}/${LABELI}/logs ... \n"
 echo -e  "sbatch ${DIRMONAN}/testcase/runs/${EXP}/${LABELI}/monan_exe.sh"
 sbatch --wait ${DIRMONAN}/testcase/runs/${EXP}/${LABELI}/monan_exe.sh
+
+CR: migracao parei aqui 22/02/24
+exit
 
 if [ ! -e "${DIRMONAN}/testcase/runs/${EXP}/${LABELI}/monanprd/diag.${final_date}.nc" ]; then
     echo "********* ATENTION ************"
