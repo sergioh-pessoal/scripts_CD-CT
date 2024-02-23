@@ -45,23 +45,23 @@ function usage(){
 
 if [ $# -ne 4 ]; then
    usage
-   exit 1
+#   exit 1
 fi
 
 #
 # pegando argumentos
 #
-export EXP=${1}
-export RES=${2}
-export LABELI=${3} 
-export FCST=${4}
+export EXP=${1};      EXP=GFS
+export RES=${2};      RES=1024002
+export LABELI=${3};   LABELI=2024010100 
+export FCST=${4};     FCST=24
 
 #----------------------------------
 
 . ./load_monan_app_modules.sh
 source ${DIRMONAN_SCR}/generic_funcs_and_variables.sh
 
-datai=${LABELI}
+datai=${LABELI}   #CR: na migracao -> yyyymmddhhi
 echo ${datai}
 
 # add FCST to datai
@@ -79,36 +79,42 @@ echo
 
 #----------------------------------
 
-mkdir -p ${DIRMONAN}/logs 
-mkdir -p ${DIRMONAN}/namelist 
-mkdir -p ${DIRMONAN}/tar
+echo "mkdir -p ${DIRMONAN}/logs    "  #CR: na migracao -> 
+echo "mkdir -p ${DIRMONAN}/namelist " #CR: na migracao ->
+echo "mkdir -p ${DIRMONAN}/tar      " #CR: na migracao ->
 
 #----------------------------------
 
 
+#CR: migracao: MONAN_testcase_GFS.v1.0.tgz (X1.graph.part.ncores e tables) migrado em datain/fixed
 echo -e  "${GREEN}==>${NC} Copying and decompressing testcase data... \n"
-tar -xzf ${DIRDADOS}/MONAN_testcase_GFS.v1.0.tgz -C ${DIRroot}
+echo "tar -xzf ${DIRDADOS}/MONAN_testcase_GFS.v1.0.tgz -C ${DIRroot}"
 
+
+#CR: migracao: todos os scripts fornecidos e utilizados testcase/scripts serao versionados no novo diretorio pricipal scripts 
 echo -e  "${GREEN}==>${NC} Copyings scripts from repository to MONAN testcase script folders... \n"
-cp -rf ${DIRMONAN_SCR}/* ${DIRMONAN}/testcase/scripts/
+echo "cp -rf ${DIRMONAN_SCR}/* ${DIRMONAN}/testcase/scripts/"
 
+#CR: migracao: DIRMONAN_NML=${DIRroot}/namelist -> datain/namelists
 echo -e  "${GREEN}==>${NC} Copyings scripts from repository to MONAN testcase namelist folders... \n"
-cp -rf ${DIRMONAN_NML}/* ${DIRMONAN}/testcase/namelist/
+echo "cp -rf ${DIRMONAN_NML}/* ${DIRMONAN}/testcase/namelist/"
 
+#CR: migracao:  ${DIRMONAN_NCL}/* nao encontrado ate agora
 echo -e  "${GREEN}==>${NC} Copyings scripts from repository to MONAN testcase NCL folders... \n"
-cp -rf ${DIRMONAN_NCL}/* ${DIRMONAN}/testcase/NCL/
+echo "cp -rf ${DIRMONAN_NCL}/* ${DIRMONAN}/testcase/NCL/"
+
 
 
 
 if [ ! -e ${DIRMONAN}/testcase/runs/${EXP}/static/x1.${RES}.static.nc ]; then
 
   echo -e  "${GREEN}==>${NC} Creating make_static.sh for submiting init_atmosphere...\n"
-  cd ${DIRMONAN}/testcase/scripts
-  ${DIRMONAN}/testcase/scripts/static.sh ${EXP} ${RES}
-
+  echo "cd ${DIRMONAN}/testcase/scripts"
+  echo "${DIRMONAN}/testcase/scripts/static.sh ${EXP} ${RES}"
+   exit
   echo -e  "${GREEN}==>${NC} Executing sbatch make_static.sh...\n"
-  cd ${DIRMONAN}/testcase/runs/${EXP}/static
-  sbatch --wait make_static.sh
+  echo "cd ${DIRMONAN}/testcase/runs/${EXP}/static"
+  echo "sbatch --wait make_static.sh"
 
   if [ ! -e x1.${RES}.static.nc ]; then
     echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	
@@ -148,10 +154,10 @@ for file in "${files_ungrib[@]}"; do
 done
 
 
-
 echo -e  "${GREEN}==>${NC} Submiting InitAtmos_exe.sh...\n"
 cd ${DIRMONAN}/testcase/runs/${EXP}/${LABELI}
 sbatch --wait InitAtmos_exe.sh
+
 
 if [ ! -e x1.${RES}.init.nc ]; then
   echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	
@@ -164,6 +170,9 @@ echo -e  "${GREEN}==>${NC} Submitting MONAN and waiting for finish before exit .
 echo -e  "${GREEN}==>${NC} Logs being generated at ${DIRMONAN}/testcase/runs/${EXP}/${LABELI}/logs ... \n"
 echo -e  "sbatch ${DIRMONAN}/testcase/runs/${EXP}/${LABELI}/monan_exe.sh"
 sbatch --wait ${DIRMONAN}/testcase/runs/${EXP}/${LABELI}/monan_exe.sh
+
+CR: migracao parei aqui 22/02/24
+exit
 
 if [ ! -e "${DIRMONAN}/testcase/runs/${EXP}/${LABELI}/monanprd/diag.${final_date}.nc" ]; then
     echo "********* ATENTION ************"

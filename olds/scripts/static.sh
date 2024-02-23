@@ -44,6 +44,7 @@ fi
 #---
 
 STATICPATH=${RUNDIR}/${EXP}/static
+echo $STATICPATH
 
 #
 # Criando diretorio dados Estaticos
@@ -68,6 +69,7 @@ sed -e "s,#RES#,${RES},g" \
        	${NMLDIR}/streams.init_atmosphere.STATIC \
 	> ${STATICPATH}/streams.init_atmosphere
 
+exit
 
 cores=32
 
