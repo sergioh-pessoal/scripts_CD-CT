@@ -33,24 +33,23 @@ EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 #-------------------------------------------------------
 
 
-
 # Input variables:--------------------------------------
 YYYYMMDDHHi=${1};    YYYYMMDDHHi=2024012000
 RES=${2};            RES=1024002
 #-------------------------------------------------------
 
 
-
 # Local variables--------------------------------------
 start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}:00:00
 GEODATA=${DATAIN}/WPS_GEOG
-ncores=32
+ncores=${INITATMOS_ncores}
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 
 
 sed -e "s,#LABELI#,${start_date},g;s,#GEODAT#,${GEODATA},g" \
 	 ${DATAIN}/namelists/namelist.init_atmosphere.TEMPLATE > ${SCRIPTS}/namelist.init_atmosphere
+
 cp ${DATAIN}/namelists/streams.init_atmosphere.TEMPLATE ${SCRIPTS}/streams.init_atmosphere
 #CR: verificar se existe o arq *part.${ncores}. Caso nao exista, criar um script que gere o arq necessario
 ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores} ${SCRIPTS}
@@ -63,11 +62,11 @@ mkdir -p ${DATAOUT}/logs
 rm -f ${SCRIPTS}/initatmos.bash 
 cat << EOF0 > ${SCRIPTS}/initatmos.bash 
 #!/bin/bash
-#SBATCH --job-name=InitAtmos
-#SBATCH --nodes=1                         # depends on how many boundary files are available
+#SBATCH --job-name=${INITATMOS_jobname}
+#SBATCH --nodes=${INITATMOS_nnodes}                         # depends on how many boundary files are available
 #SBATCH --partition=${INITATMOS_QUEUE} 
-#SBATCH --tasks-per-node=${ncores}               # only for benchmark
-#SBATCH --time=01:00:00
+#SBATCH --tasks-per-node=${INITATMOS_ncores}               # only for benchmark
+#SBATCH --time=${STATIC_walltime}
 #SBATCH --output=${DATAOUT}/logs/initatmos.bash.o%j    # File name for standard output
 #SBATCH --error=${DATAOUT}/logs/initatmos.bash.e%j     # File name for standard error output
 #SBATCH --exclusive

@@ -53,6 +53,14 @@ EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 #-------------------------------------------------------
 
 
+# Input variables:--------------------------------------
+EXP=${1};         EXP=GFS
+RES=${2};         RES=1024002
+YYYYMMDDHHi=${3}; YYYYMMDDHHi=2024012000
+FCST=${4};        FCST=24
+#-------------------------------------------------------
+cp -f setenv.bash ${SCRIPTS}
+
 
 # Local variables--------------------------------------
 # from script 1:--- (keep it only if was usefull) -----
@@ -63,17 +71,9 @@ branch_name="develop"
 #-------------------------------------------------------
 
 
-# Input variables:--------------------------------------
-EXP=${1};      EXP=GFS
-RES=${2};      RES=1024002
-LABELI=${3};   LABELI=2024010100 
-FCST=${4};     FCST=24
-#-------------------------------------------------------
-cp -f setenv.bash ${SCRIPTS}
 
 
 # Calculating CIs and final forecast dates in model namelist format:
-yyyymmddhhi=${LABELI}
 yyyymmddi=${yyyymmddhhi:0:8}
 hhi=${yyyymmddhhi:8:2}
 yyyymmddhhf=$(date +"%Y%m%d%H" -d "${yyyymmddi} ${hhi}:00 ${FCST} hours" )

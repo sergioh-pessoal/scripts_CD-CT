@@ -48,29 +48,31 @@ SOURCES=${DIRHOME}/sources;      mkdir -p ${SOURCES}
 EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 #-------------------------------------------------------
 
-# Input variables:--------------------------------------
-EXP=${1};      EXP=GFS
-YYYYMMDDHHi=${2};   YYYYMMDDHHi=2024010100 
-RES=${3};      RES=1024002
 
+# Input variables:--------------------------------------
+EXP=${1};         EXP=GFS
+YYYYMMDDHHi=${2}; YYYYMMDDHHi=2024012000
+RES=${3};         RES=1024002
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}
 
+
 # Local variables--------------------------------------
 start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}:00:00
-ncores=1024
+ncores=${MODEL_ncores}
 #-------------------------------------------------------
 
 
 
-
+#CR: verify if input files exist before submit the model:
 ln -sf ${EXECS}/atmosphere_model ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/*TBL ${SCRIPTS}
-ln -sf ${DATAIN}/fixed/*.DBL ${SCRIPTS}
+ln -sf ${DATAIN}/fixed/*DBL ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/*DATA ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores} ${SCRIPTS}
+ln -sf ${DATAIN}/fixed/x1.${RES}.init.nc ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/Vtable.GFS ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/Vtable.ERA-interim.pl ${SCRIPTS}
 
@@ -88,12 +90,12 @@ mkdir -p ${DATAOUT}/logs
 rm -f ${SCRIPTS}/model.bash 
 cat << EOF0 > ${SCRIPTS}/model.bash 
 #!/bin/bash
-#SBATCH --nodes=16
-#SBATCH --ntasks=${ncores}
-#SBATCH --tasks-per-node=64
+#SBATCH --job-name=${MODEL_jobname}
+#SBATCH --nodes=${MODEL_nnodes}
+#SBATCH --ntasks=${MODEL_ncores}
+#SBATCH --tasks-per-node=${MODEL_ncpn}
 #SBATCH --partition=${MODEL_QUEUE}
-#SBATCH --job-name=Model.MONAN
-#SBATCH --time=4:00:00         
+#SBATCH --time=${STATIC_walltime}
 #SBATCH --output=${DATAOUT}/logs/model.bash.o%j    # File name for standard output
 #SBATCH --error=${DATAOUT}/logs/model.bash.e%j     # File name for standard error output
 #SBATCH --exclusive
@@ -146,3 +148,4 @@ echo -e  "sbatch ${SCRIPTS}/model.bash"
 sbatch --wait ${SCRIPTS}/model.bash
 
 
+#CR: maybe put the ic date on the name of output files!

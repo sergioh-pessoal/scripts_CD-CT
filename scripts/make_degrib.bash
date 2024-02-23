@@ -32,13 +32,11 @@ EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 #-------------------------------------------------------
 
 
-
 # Input variables:--------------------------------------
 YYYYMMDDHHi=${1};    YYYYMMDDHHi=2024012000
 EXP=${2};            EXP=GFS
 RES=${3};            RES=1024002
 #-------------------------------------------------------
-
 
 
 # Local variables--------------------------------------
@@ -72,11 +70,12 @@ mkdir -p ${DATAOUT}/logs
 rm -f ${SCRIPTS}/degrib.bash 
 cat << EOF0 > ${SCRIPTS}/degrib.bash 
 #!/bin/bash
-#SBATCH --job-name=Degrib
-#SBATCH --nodes=1
+#SBATCH --job-name=${DEGRIB_jobname}
+#SBATCH --nodes=${DEGRIB_nnodes}
 #SBATCH --partition=${DEGRIB_QUEUE}
-#SBATCH --tasks-per-node=1                      # ic for benchmark
-#SBATCH --time=00:30:00
+#SBATCH --ntasks=${DEGRIB_ncores}             
+#SBATCH --tasks-per-node=${DEGRIB_ncpn}                     # ic for benchmark
+#SBATCH --time=${STATIC_walltime}
 #SBATCH --output=${DATAOUT}/logs/debrib.o%j    # File name for standard output
 #SBATCH --error=${DATAOUT}/logs/debrib.e%j     # File name for standard error output
 #

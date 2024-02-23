@@ -19,24 +19,21 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 
 
 # Standart directories variables:
-DIRHOME=${DIRWORK}/../../MONAN;   rm -fr ${DIRHOME}; mkdir -p ${DIRHOME}  #CR: Remove rmdir after all is developed (or not?)!
-SCRIPTS=${DIRHOME}/scripts;   mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOME}/datain;     mkdir -p ${DATAIN}
-DATAOUT=${DIRHOME}/dataout;   mkdir -p ${DATAOUT}
-SOURCES=${DIRHOME}/sources;   mkdir -p ${SOURCES}
-EXECS=${DIRHOME}/execs;       mkdir -p ${EXECS}
+DIRHOME=${DIRWORK}/../../MONAN;  rm -fr ${DIRHOME}; mkdir -p ${DIRHOME}  #CR: Remove rmdir when develope its done. (or not?)!
+SCRIPTS=${DIRHOME}/scripts;      mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOME}/datain;        mkdir -p ${DATAIN}
+DATAOUT=${DIRHOME}/dataout;      mkdir -p ${DATAOUT}
+SOURCES=${DIRHOME}/sources;      mkdir -p ${SOURCES}
+EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 
 
 
 # Input variables:-----------------------------------------------------
-# for script 1:
 github_link=${1}; github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
-
-# for script 2:
-EXP=${1};      EXP=GFS
-RES=${2};      RES=1024002
-LABELI=${3};   LABELI=2024010100 
-FCST=${4};     FCST=24
+EXP=${2};         EXP=GFS
+RES=${3};         RES=1024002
+YYYYMMDDHHi=${4}; YYYYMMDDHHi=2024012000
+FCST=${5};        FCST=24
 #----------------------------------------------------------------------
 
 
@@ -48,6 +45,17 @@ FCST=${4};     FCST=24
 
 # STEP 2: Executing the pre-processing fase. Preparing all CI/CC files needed:
 
-2.pre_processing.bash ${EXP} ${RES} ${LABELI} ${FCST} 
+2.pre_processing.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} 
 
+
+
+# STEP 3: Executing the Model run:
+
+3.run_model.bash ${EXP} ${YYYYMMDDHHi} ${RES}
+
+
+
+# STEP 4: Executing the Post of Model run:
+
+4.run_post.bash 
 

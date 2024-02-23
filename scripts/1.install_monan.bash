@@ -28,6 +28,12 @@ EXECS=${DIRHOME}/execs;       mkdir -p ${EXECS}
 #----------------------------------------------------------------------
 
 
+# Input variables:-----------------------------------------------------
+github_link=${1}; github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
+#----------------------------------------------------------------------
+cp -f setenv.bash ${SCRIPTS}
+
+
 # Local variables:-----------------------------------------------------
 vlabel="v0.1.0"
 MONANDIR=${SOURCES}/MONAN-Model_${vlabel}
@@ -37,11 +43,6 @@ branch_name="develop"
 
 
 
-# Input variables:-----------------------------------------------------
-github_link=${1}
-github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
-#----------------------------------------------------------------------
-cp -f setenv.bash ${SCRIPTS}
 
 
 

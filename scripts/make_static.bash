@@ -30,17 +30,16 @@ EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 #-------------------------------------------------------
 
 
-
-# Local variables--------------------------------------
-GEODATA=${DATAIN}/WPS_GEOG
-cores=32
-#-------------------------------------------------------
-
-
 # Input variables:--------------------------------------
 RES=${1};      RES=1024002
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
+
+
+# Local variables--------------------------------------
+GEODATA=${DATAIN}/WPS_GEOG
+cores=${STATIC_ncores}
+#-------------------------------------------------------
 
 
 #CR: TODO: important verify if exist each file below:
@@ -65,12 +64,12 @@ mkdir -p ${DATAOUT}/logs
 rm -f ${SCRIPTS}/static.bash 
 cat << EOF0 > ${SCRIPTS}/static.bash 
 #!/bin/bash
-#SBATCH --job-name=static
-#SBATCH --nodes=1 
-#SBATCH --ntasks=${cores}             
-#SBATCH --tasks-per-node=${cores}  
+#SBATCH --job-name=${STATIC_jobname}
+#SBATCH --nodes=${STATIC_nnodes} 
+#SBATCH --ntasks=${STATIC_ncores}             
+#SBATCH --tasks-per-node=${STATIC_ncpn}  
 #SBATCH --partition=${STATIC_QUEUE}
-#SBATCH --time=02:00:00        
+#SBATCH --time=${STATIC_walltime}        
 #SBATCH --output=${DATAOUT}/logs/static.bash.o%j    # File name for standard output
 #SBATCH --error=${DATAOUT}/logs/static.bash.e%j     # File name for standard error output
 #SBATCH --exclusive

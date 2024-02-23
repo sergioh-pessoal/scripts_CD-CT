@@ -42,31 +42,49 @@ export OPERDIR=/oper/dados/ioper/tempo
 
 
 
+
 # Submiting variables:--------------------------------------------------
 
-# Static phase:
-export STATIC_QUEUE=batch
-export STATIC_ncores=
-export STATIC_nnodes=
-export STATIC_ncpn=
+# PRE-Static phase:
+export STATIC_QUEUE="batch"
+export STATIC_ncores=32
+export STATIC_nnodes=1
+export STATIC_ncpn=32
+export STATIC_jobname="Pre.static"
+export STATIC_walltime="02:00:00"
 
-# Degrib phase:
-export DEGRIB_QUEUE=batch
-export DEGRIB_ncores=
-export DEGRIB_nnodes=
-export DEGRIB_ncpn=
+# PRE-Degrib phase:
+export DEGRIB_QUEUE="batch"
+export DEGRIB_ncores=1
+export DEGRIB_nnodes=1
+export DEGRIB_ncpn=1
+export DEGRIB_jobname="Pre.degrib"
+export STATIC_walltime="00:30:00"
 
-# Init Atmosphere phase:
-export INITATMOS_QUEUE=batch
-export INITATMOS_ncores=
-export INITATMOS_nnodes=
+# PRE-Init Atmosphere phase:
+export INITATMOS_QUEUE="batch"
+export INITATMOS_ncores=32
+export INITATMOS_nnodes=1
 export INITATMOS_ncpn=
+export INITATMOS_jobname="Pre.InitAtmos"
+export STATIC_walltime="01:00:00"
 
 # Model phase:
 export MODEL_QUEUE=batch
-export MODEL_ncores=
-export MODEL_nnodes=
-export MODEL_ncpn=
+export MODEL_ncores=1024
+export MODEL_nnodes=16
+export MODEL_ncpn=64
+export MODEL_jobname="Model.MONAN"
+export STATIC_walltime="4:00:00"
+
+# Post phase:
+export POST_QUEUE="batch"
+export POST_ncores=
+export POST_nnodes=
+export POST_ncpn=
+export POST_jobname="Post.MONAN"
+export STATIC_walltime=""
+
 #-----------------------------------------------------------------------
 
 
