@@ -62,6 +62,8 @@ mkdir -p ${DATAOUT}/${YYYYMMDDHHi}
 start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}:00:00
 ncores=${MODEL_ncores}
 #-------------------------------------------------------
+mkdir -p ${DATAIN}/namelists
+cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 
 
 
@@ -95,7 +97,7 @@ cat << EOF0 > ${SCRIPTS}/model.bash
 #SBATCH --ntasks=${MODEL_ncores}
 #SBATCH --tasks-per-node=${MODEL_ncpn}
 #SBATCH --partition=${MODEL_QUEUE}
-#SBATCH --time=${STATIC_walltime}
+#SBATCH --time=${MODEL_walltime}
 #SBATCH --output=${DATAOUT}/logs/model.bash.o%j    # File name for standard output
 #SBATCH --error=${DATAOUT}/logs/model.bash.e%j     # File name for standard error output
 #SBATCH --exclusive
@@ -103,6 +105,7 @@ cat << EOF0 > ${SCRIPTS}/model.bash
 
 
 export executable=atmosphere_model
+
 ulimit -c unlimited
 ulimit -v unlimited
 ulimit -s unlimited
