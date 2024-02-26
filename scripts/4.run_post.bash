@@ -1,5 +1,3 @@
-#!/bin/bash
-
 #!/bin/bash 
 #-----------------------------------------------------------------------------#
 # !SCRIPT: run_post
@@ -17,7 +15,7 @@
 #
 #-----------------------------------------------------------------------------#
 
-if [ $# -ne 0 ]
+if [ $# -ne 2 ]
 then
    echo ""
    echo "Instructions: execute the command below"
@@ -53,7 +51,6 @@ YYYYMMDDHHi=${1}; YYYYMMDDHHi=2024012000
 RES=${2};         RES=1024002
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
-mkdir -p ${DATAOUT}/${YYYYMMDDHHi}
 
 
 # Local variables--------------------------------------
@@ -68,7 +65,7 @@ cp ${DATAIN}/namelists/include_fields.diag ${SCRIPTS}/include_fields
 ln -sf ${EXECS}/convert_mpas ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.init.nc ${SCRIPTS}
 
-mkdir -p ${DATAOUT}/logs
+
 rm -f ${SCRIPTS}/post.bash 
 cat << EOF0 > ${SCRIPTS}/post.bash 
 #!/bin/bash
