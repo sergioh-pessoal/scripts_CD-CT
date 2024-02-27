@@ -1,19 +1,24 @@
 #!/bin/bash 
 
 
-if [ $# -ne 3 ]
+if [ $# -ne 4 ]
 then
    echo ""
    echo "Instructions: execute the command below"
    echo ""
-   echo "${0} LABELI"
+   echo "${0} EXP_NAME RESOLUTION LABELI FCST"
    echo ""
-   echo "LABELI      :: Initial date, e.g.: 2015030600"
    echo "EXP_NAME    :: Forcing: GFS"
+   echo "            :: Others options to be added later..."
    echo "RESOLUTION  :: number of points in resolution model grid, e.g: 1024002  (24 km)"
+   echo "LABELI      :: Initial date YYYYMMDDHH, e.g.: 2024010100"
+   echo "FCST        :: Forecast hours, e.g.: 24 or 36, etc."
+   echo ""
+   echo "24 hour forcast example:"
+   echo "${0} GFS 1024002 2024010100 24"
    echo ""
 
-#   exit
+   exit
 fi
 
 # Set environment variables exports:
@@ -33,9 +38,10 @@ EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 
 
 # Input variables:--------------------------------------
-YYYYMMDDHHi=${1};    YYYYMMDDHHi=2024012000
-EXP=${2};            EXP=GFS
-RES=${3};            RES=1024002
+EXP=${1};         #EXP=GFS
+RES=${2};         #RES=1024002
+YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
+FCST=${4};        #FCST=24
 #-------------------------------------------------------
 
 
@@ -46,6 +52,8 @@ BNDDIR=${OPERDIREXP}/0p25/brutos/${YYYYMMDDHHi:0:4}/${YYYYMMDDHHi:4:2}/${YYYYMMD
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 mkdir -p ${DATAIN}/${YYYYMMDDHHi}
+mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
+
 mkdir -p ${HOME}/local/lib64
 cp -f /usr/lib64/libjasper.so* ${HOME}/local/lib64
 cp -f /usr/lib64/libjpeg.so* ${HOME}/local/lib64
@@ -66,7 +74,7 @@ cp -rf ${BNDDIR}/gfs.t00z.pgrb2.0p25.f000.${YYYYMMDDHHi}.grib2 ${DATAIN}/${YYYYM
 
 
 
-mkdir -p ${DATAOUT}/logs
+
 rm -f ${SCRIPTS}/degrib.bash 
 cat << EOF0 > ${SCRIPTS}/degrib.bash 
 #!/bin/bash
@@ -76,8 +84,8 @@ cat << EOF0 > ${SCRIPTS}/degrib.bash
 #SBATCH --ntasks=${DEGRIB_ncores}             
 #SBATCH --tasks-per-node=${DEGRIB_ncpn}                     # ic for benchmark
 #SBATCH --time=${STATIC_walltime}
-#SBATCH --output=${DATAOUT}/logs/debrib.o%j    # File name for standard output
-#SBATCH --error=${DATAOUT}/logs/debrib.e%j     # File name for standard error output
+#SBATCH --output=${DATAOUT}/${YYYYMMDDHHi}/Pre/logs/debrib.o%j    # File name for standard output
+#SBATCH --error=${DATAOUT}/${YYYYMMDDHHi}/Pre/logs/debrib.e%j     # File name for standard error output
 #
 
 ulimit -s unlimited
@@ -121,9 +129,9 @@ fi
 #
 # clean up and remove links
 #
-   mv ungrib.log ${DATAOUT}/logs/ungrib.${start_date}.log
-   mv namelist.wps ${DATAOUT}/logs/namelist.${start_date}.wps
-   mv GFS\:${start_date:0:13} ${DATAIN}/${YYYYMMDDHHi}
+   mv ungrib.log ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs/ungrib.${start_date}.log
+   mv namelist.wps ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs/namelist.${start_date}.wps
+   mv GFS\:${start_date:0:13} ${DATAOUT}/${YYYYMMDDHHi}/Pre
 
    rm -f ${SCRIPTS}/ungrib.exe 
    rm -f ${SCRIPTS}/Vtable 
@@ -144,7 +152,7 @@ sbatch --wait ${SCRIPTS}/degrib.bash
 
 files_ungrib=("${EXP}:${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}")
 for file in "${files_ungrib[@]}"; do
-  if [ ! -s ${DATAIN}/${YYYYMMDDHHi}/${file} ] 
+  if [ ! -s ${DATAOUT}/${YYYYMMDDHHi}/Pre/${file} ] 
   then
     echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	  
     echo -e  "${RED}==>${NC} Degrib fails! At least the file ${file} was not generated at ${DATAIN}/${YYYYMMDDHHi}. \n"

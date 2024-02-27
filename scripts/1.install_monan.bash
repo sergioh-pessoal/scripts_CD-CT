@@ -1,16 +1,33 @@
 #!/bin/bash 
 
+#-----------------------------------------------------------------------------#
+# !SCRIPT: install_monan
+#
+# !DESCRIPTION:
+#     Script to intall the MONAN model from a user github repositry.
+#     
+#     Performs the following tasks:
+# 
+#        o Clone the Monan model github repository v0.1.0 in a local directory
+#        o Uses the "develop" branch
+#        o Make the script make-all.sh that compiles the Atmosphere Model and the Init Atmosphere Model
+#        o As alternative for advanced users, this scrpt creates a simple compile script that just compile the Atmosphere Model
+#        o Clone the COnvert_mpas tool from the official repository for convert the output model files in lat-lon grid.
+#        o COmpile the convert_mpas
+#        o Post-processing (netcdf for grib2, latlon regrid, crop) (CR: to be modified to phase 4)
+#
+#-----------------------------------------------------------------------------#
 
-#if [ $# -ne 1 ]
-#then
-#   echo ""
-#   echo "Instructions: execute the command below"
-#   echo ""
-#   echo "${0} [G]"
-#   echo ""
-#   echo "G   :: GitHub link for your personal fork, eg: https://github.com/MYUSER/MONAN-Model.git"
-#   exit
-#fi
+if [ $# -ne 1 ]
+then
+   echo ""
+   echo "Instructions: execute the command below"
+   echo ""
+   echo "${0} [G]"
+   echo ""
+   echo "G   :: GitHub link for your personal fork, eg: https://github.com/MYUSER/MONAN-Model.git"
+   exit
+fi
 
 # Set environment variables exports:
 echo ""
@@ -19,17 +36,17 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 
 
 # Standart directories variables:---------------------------------------
-DIRHOME=${DIRWORK}/../../MONAN;   rm -fr ${DIRHOME}; mkdir -p ${DIRHOME}  #CR: Remove rmdir after all is developed (or not?)!
-SCRIPTS=${DIRHOME}/scripts;   mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOME}/datain;     mkdir -p ${DATAIN}
-DATAOUT=${DIRHOME}/dataout;   mkdir -p ${DATAOUT}
-SOURCES=${DIRHOME}/sources;   mkdir -p ${SOURCES}
-EXECS=${DIRHOME}/execs;       mkdir -p ${EXECS}
+DIRHOME=${DIRWORK}/../../MONAN;  rm -fr ${DIRHOME}; mkdir -p ${DIRHOME}  #CR: Remove rmdir after all is developed (or not?)!
+SCRIPTS=${DIRHOME}/scripts;      mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOME}/datain;        mkdir -p ${DATAIN}
+DATAOUT=${DIRHOME}/dataout;      mkdir -p ${DATAOUT}
+SOURCES=${DIRHOME}/sources;      mkdir -p ${SOURCES}
+EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 #----------------------------------------------------------------------
 
 
 # Input variables:-----------------------------------------------------
-github_link=${1}; github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
+github_link=${1}; #github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
 #----------------------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 
@@ -254,14 +271,5 @@ else
     exit -1
 fi
 
-
-exit
-
-#CR: this should be done in pre-processing fase, not here---
-echo -e  "${GREEN}==>${NC} Copying and decompressing all data for preprocessing... \n"
-echo -e  "${GREEN}==>${NC} It may take several minutes...\n"
-tar -xzf ${DIRDADOS}/MONAN_data_v1.0.tgz -C ${DIRMONAN}
-
-echo -e  "${GREEN}==>${NC} Script ${0} completed. \n"
 
 

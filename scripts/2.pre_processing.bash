@@ -34,7 +34,7 @@ then
    echo "${0} GFS 1024002 2024010100 24"
    echo ""
 
-#   exit
+   exit
 fi
 
 # Set environment variables exports:
@@ -54,55 +54,47 @@ EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 
 
 # Input variables:--------------------------------------
-EXP=${1};         EXP=GFS
-RES=${2};         RES=1024002
-YYYYMMDDHHi=${3}; YYYYMMDDHHi=2024012000
-FCST=${4};        FCST=24
+EXP=${1};         #EXP=GFS
+RES=${2};         #RES=1024002
+YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
+FCST=${4};        #FCST=24
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 
 
 # Local variables--------------------------------------
-# from script 1:--- (keep it only if was usefull) -----
-vlabel="v0.1.0"
-MONANDIR=${SOURCES}/MONAN-Model_${vlabel}
-CONVERT_MPAS_DIR=${SOURCES}/convert_mpas
-branch_name="develop"
-#-------------------------------------------------------
-
-
-
-
 # Calculating CIs and final forecast dates in model namelist format:
 yyyymmddi=${yyyymmddhhi:0:8}
 hhi=${yyyymmddhhi:8:2}
 yyyymmddhhf=$(date +"%Y%m%d%H" -d "${yyyymmddi} ${hhi}:00 ${FCST} hours" )
 final_date=${yyyymmddhhf:0:4}-${yyyymmddhhf:4:2}-${yyyymmddhhf:6:2}_${yyyymmddhhf:8:2}.00.00
-
-# Creating the some importants directories:
-# Pre-processing input dir:
-#
-# Pre-processing output dir:
-#
-
-
-# Untar the fixed files:
-# x1.${RES}.graph.info.part.<Ncores> files can be found in datain/fixed
-# *.TBL files can be found in datain/fixed
-# x1.${RES}.grid.nc can be found in datain/fixed
-echo -e  "${GREEN}==>${NC} Copying and decompressing input data... \n"
-#tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOME}
+#-------------------------------------------------------
 # namelists files marked with TEMPLATE can be found in datain/namelists
 # those files are copied from versined main diretory scripts_CD-CT/namelists
 mkdir -p ${DATAIN}/namelists
 cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 
 
+
+
+
+
+# Untar the fixed files:
+# x1.${RES}.graph.info.part.<Ncores> files can be found in datain/fixed
+# *.TBL files can be found in datain/fixed
+# x1.${RES}.grid.nc can be found in datain/fixed
+#~12m30s
+echo -e  "${GREEN}==>${NC} Copying and decompressing input data... \n"
+time tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOME}
+
+
 # Creating the x1.${RES}.static.nc file once, if does not exist yet:---------------
 if [ ! -s ${DATAIN}/fixed/x1.${RES}.static.nc ]
 then
    echo -e "${GREEN}==>${NC} Creating static.bash for submiting init_atmosphere to create x1.${RES}.static.nc...\n"
-   ./make_static.bash ${RES}
+#   ./make_static.bash ${RES}
+   #~8m44
+   time ./make_static.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST}
 else
    echo -e "${GREEN}==>${NC} File x1.${RES}.static.nc already exist in ${DATAIN}/fixed.\n"
 fi
@@ -110,19 +102,15 @@ fi
 
 
 
-
 # Degrib phase:---------------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting Degrib...\n"
-./make_degrib.bash ${yyyymmddhhi} ${EXP} ${RES}
-
-
+#./make_degrib.bash ${yyyymmddhhi} ${EXP} ${RES}
+#
+time ./make_degrib.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST}
 
 # Init Atmosphere phase:------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting Init Atmosphere...\n"
-./make_initatmos.bash
-
-
-
+time ./make_initatmos.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST}
 
 
 #----------------------------------------------------------------------------------

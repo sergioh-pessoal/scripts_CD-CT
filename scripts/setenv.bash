@@ -6,11 +6,13 @@ module purge
 module load ohpc
 module unload openmpi4
 module load phdf5
-module load netcdf
-module load netcdf-fortran
+module load netcdf 
+module load netcdf-fortran 
 module load mpich-4.0.2-gcc-9.4.0-gpof2pv
 module load hwloc
 module load phdf5
+module load cdo-2.0.4-gcc-9.4.0-bjulvnd
+module load opengrads-2.2.1
 module list
 
 
@@ -59,7 +61,7 @@ export DEGRIB_ncores=1
 export DEGRIB_nnodes=1
 export DEGRIB_ncpn=1
 export DEGRIB_jobname="Pre.degrib"
-export STATIC_walltime="00:30:00"
+export DEGRIB_walltime="00:30:00"
 
 # PRE-Init Atmosphere phase:
 export INITATMOS_QUEUE="batch"
@@ -67,7 +69,7 @@ export INITATMOS_ncores=32
 export INITATMOS_nnodes=1
 export INITATMOS_ncpn=
 export INITATMOS_jobname="Pre.InitAtmos"
-export STATIC_walltime="01:00:00"
+export INITATMOS_walltime="01:00:00"
 
 # Model phase:
 export MODEL_QUEUE=batch
@@ -75,15 +77,25 @@ export MODEL_ncores=1024
 export MODEL_nnodes=16
 export MODEL_ncpn=64
 export MODEL_jobname="Model.MONAN"
-export STATIC_walltime="4:00:00"
+export MODEL_walltime="4:00:00"
 
 # Post phase:
 export POST_QUEUE="batch"
-export POST_ncores=
-export POST_nnodes=
-export POST_ncpn=
+export POST_ncores=1
+export POST_nnodes=1
+export POST_ncpn=1
 export POST_jobname="Post.MONAN"
-export STATIC_walltime=""
+export POST_walltime="8:00:00"
+
+
+# Products phase:
+export PRODS_QUEUE="batch"
+export PRODS_ncores=1
+export PRODS_nnodes=1
+export PRODS_ncpn=1
+export PRODS_jobname="Prods.MONAN"
+export PRODS_walltime="8:00:00"
+
 
 #-----------------------------------------------------------------------
 

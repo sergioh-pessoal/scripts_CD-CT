@@ -1,5 +1,3 @@
-#!/bin/bash
-
 #!/bin/bash 
 #-----------------------------------------------------------------------------#
 # !SCRIPT: run_model
@@ -22,15 +20,19 @@ then
    echo ""
    echo "Instructions: execute the command below"
    echo ""
-   echo "${0} EXP_NAME LABELI RESOLUTION"
+   echo "${0} EXP_NAME RESOLUTION LABELI FCST"
    echo ""
    echo "EXP_NAME    :: Forcing: GFS"
-   echo "LABELI      :: Initial date YYYYMMDDHH, e.g.: 2024010100"
+   echo "            :: Others options to be added later..."
    echo "RESOLUTION  :: number of points in resolution model grid, e.g: 1024002  (24 km)"
-
+   echo "LABELI      :: Initial date YYYYMMDDHH, e.g.: 2024010100"
+   echo "FCST        :: Forecast hours, e.g.: 24 or 36, etc."
+   echo ""
+   echo "24 hour forcast example:"
+   echo "${0} GFS 1024002 2024010100 24"
    echo ""
 
-#   exit
+   exit
 fi
 
 # Set environment variables exports:
@@ -50,18 +52,21 @@ EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 
 
 # Input variables:--------------------------------------
-EXP=${1};         EXP=GFS
-YYYYMMDDHHi=${2}; YYYYMMDDHHi=2024012000
-RES=${3};         RES=1024002
+EXP=${1};         #EXP=GFS
+RES=${2};         #RES=1024002
+YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
+FCST=${4};        #FCST=24
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
-mkdir -p ${DATAOUT}/${YYYYMMDDHHi}
+mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
 
 
 # Local variables--------------------------------------
 start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}:00:00
 ncores=${MODEL_ncores}
 #-------------------------------------------------------
+mkdir -p ${DATAIN}/namelists
+cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 
 
 
@@ -72,7 +77,7 @@ ln -sf ${DATAIN}/fixed/*DBL ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/*DATA ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores} ${SCRIPTS}
-ln -sf ${DATAIN}/fixed/x1.${RES}.init.nc ${SCRIPTS}
+ln -sf ${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/Vtable.GFS ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/Vtable.ERA-interim.pl ${SCRIPTS}
 
@@ -86,7 +91,6 @@ fi
 cp ${DATAIN}/namelists//stream_list.atmosphere.* ${SCRIPTS}
 
 
-mkdir -p ${DATAOUT}/logs
 rm -f ${SCRIPTS}/model.bash 
 cat << EOF0 > ${SCRIPTS}/model.bash 
 #!/bin/bash
@@ -95,14 +99,15 @@ cat << EOF0 > ${SCRIPTS}/model.bash
 #SBATCH --ntasks=${MODEL_ncores}
 #SBATCH --tasks-per-node=${MODEL_ncpn}
 #SBATCH --partition=${MODEL_QUEUE}
-#SBATCH --time=${STATIC_walltime}
-#SBATCH --output=${DATAOUT}/logs/model.bash.o%j    # File name for standard output
-#SBATCH --error=${DATAOUT}/logs/model.bash.e%j     # File name for standard error output
+#SBATCH --time=${MODEL_walltime}
+#SBATCH --output=${DATAOUT}/${YYYYMMDDHHi}/Model/logs/model.bash.o%j    # File name for standard output
+#SBATCH --error=${DATAOUT}/${YYYYMMDDHHi}/Model/logs/model.bash.e%j     # File name for standard error output
 #SBATCH --exclusive
 ##SBATCH --mem=500000
 
 
 export executable=atmosphere_model
+
 ulimit -c unlimited
 ulimit -v unlimited
 ulimit -s unlimited
@@ -120,13 +125,14 @@ date
 # move dataout, clean up and remove files/links
 #
 
-#CR: maybe put these log files into the run directory (dataout/yyyymmddhhi/logs)
-mv log.atmosphere.*.out ${DATAOUT}/logs
-mv log.atmosphere.*.err ${DATAOUT}/logs
-cp -f namelist.atmosphere ${DATAOUT}/${YYYYMMDDHHi}
-cp -f stream* ${DATAOUT}/${YYYYMMDDHHi}
-mv diag* ${DATAOUT}/${YYYYMMDDHHi}
-mv histor* ${DATAOUT}/${YYYYMMDDHHi}
+mv diag* ${DATAOUT}/${YYYYMMDDHHi}/Model
+mv histor* ${DATAOUT}/${YYYYMMDDHHi}/Model
+
+mv log.atmosphere.*.out ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
+mv log.atmosphere.*.err ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
+mv namelist.atmosphere ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
+mv stream* ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
+
 rm -f ${SCRIPTS}/atmosphere_model
 rm -f ${SCRIPTS}/*TBL 
 rm -f ${SCRIPTS}/*.DBL
@@ -135,7 +141,7 @@ rm -f ${SCRIPTS}/x1.${RES}.static.nc
 rm -f ${SCRIPTS}/x1.${RES}.graph.info.part.${ncores}
 rm -f ${SCRIPTS}/Vtable.GFS
 rm -f ${SCRIPTS}/Vtable.ERA-interim.pl
-
+rm -f ${SCRIPTS}/x1.${RES}.init.nc
 
 
 
@@ -148,4 +154,17 @@ echo -e  "sbatch ${SCRIPTS}/model.bash"
 sbatch --wait ${SCRIPTS}/model.bash
 
 
-#CR: maybe put the ic date on the name of output files!
+#CR: make a subroutine to check each output file gerated here! 
+#CR: Very important make sure all files was created correctly before go foreward
+#CR: Copy all model output files to his final name: e.g: 
+#
+# MONANGMODGFSYYYYMMDDHHyyyymmddhh.24kmL55.nc
+# |---|||-||-||--------||--------|  |   |  |--file format
+# |    ||  |  |         |           |   |--levels quant.
+# |    ||  |  |         |           |--resolution, also could be 1024002, e.g.
+# |    ||  |  |         |--Forecast final date
+# |    ||  |  |--Initial condition date
+# |    ||  |--Initial condition source type: GFS, ERA5, ERAI, etc
+# |    ||--MOD for model, POS for post processed output files
+# |    |-- Type fo horiontal domain: G for global, R for regional, etc.
+# |--Name of the model: MONAN
