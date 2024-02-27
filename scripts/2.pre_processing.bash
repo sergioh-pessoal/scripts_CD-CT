@@ -34,7 +34,7 @@ then
    echo "${0} GFS 1024002 2024010100 24"
    echo ""
 
-#   exit
+   exit
 fi
 
 # Set environment variables exports:
@@ -54,10 +54,10 @@ EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 
 
 # Input variables:--------------------------------------
-EXP=${1};         EXP=GFS
-RES=${2};         RES=1024002
-YYYYMMDDHHi=${3}; YYYYMMDDHHi=2024012000
-FCST=${4};        FCST=24
+EXP=${1};         #EXP=GFS
+RES=${2};         #RES=1024002
+YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
+FCST=${4};        #FCST=24
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 
@@ -89,7 +89,7 @@ cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 # *.TBL files can be found in datain/fixed
 # x1.${RES}.grid.nc can be found in datain/fixed
 echo -e  "${GREEN}==>${NC} Copying and decompressing input data... \n"
-#tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOME}
+tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOME}
 
 
 # Creating the x1.${RES}.static.nc file once, if does not exist yet:---------------
