@@ -59,3 +59,7 @@ FCST=${5};        FCST=24
 
 4.run_post.bash 
 
+
+# STEP 5: Executing the Products
+
+5.run_products.bash 

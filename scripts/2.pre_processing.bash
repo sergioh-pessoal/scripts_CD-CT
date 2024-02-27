@@ -68,22 +68,20 @@ vlabel="v0.1.0"
 MONANDIR=${SOURCES}/MONAN-Model_${vlabel}
 CONVERT_MPAS_DIR=${SOURCES}/convert_mpas
 branch_name="develop"
-#-------------------------------------------------------
-
-
-
-
 # Calculating CIs and final forecast dates in model namelist format:
 yyyymmddi=${yyyymmddhhi:0:8}
 hhi=${yyyymmddhhi:8:2}
 yyyymmddhhf=$(date +"%Y%m%d%H" -d "${yyyymmddi} ${hhi}:00 ${FCST} hours" )
 final_date=${yyyymmddhhf:0:4}-${yyyymmddhhf:4:2}-${yyyymmddhhf:6:2}_${yyyymmddhhf:8:2}.00.00
+#-------------------------------------------------------
+# namelists files marked with TEMPLATE can be found in datain/namelists
+# those files are copied from versined main diretory scripts_CD-CT/namelists
+mkdir -p ${DATAIN}/namelists
+cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 
-# Creating the some importants directories:
-# Pre-processing input dir:
-#
-# Pre-processing output dir:
-#
+
+
+
 
 
 # Untar the fixed files:
@@ -92,10 +90,6 @@ final_date=${yyyymmddhhf:0:4}-${yyyymmddhhf:4:2}-${yyyymmddhhf:6:2}_${yyyymmddhh
 # x1.${RES}.grid.nc can be found in datain/fixed
 echo -e  "${GREEN}==>${NC} Copying and decompressing input data... \n"
 #tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOME}
-# namelists files marked with TEMPLATE can be found in datain/namelists
-# those files are copied from versined main diretory scripts_CD-CT/namelists
-mkdir -p ${DATAIN}/namelists
-cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 
 
 # Creating the x1.${RES}.static.nc file once, if does not exist yet:---------------
@@ -110,19 +104,14 @@ fi
 
 
 
-
 # Degrib phase:---------------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting Degrib...\n"
-./make_degrib.bash ${yyyymmddhhi} ${EXP} ${RES}
-
+#./make_degrib.bash ${yyyymmddhhi} ${EXP} ${RES}
 
 
 # Init Atmosphere phase:------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting Init Atmosphere...\n"
 ./make_initatmos.bash
-
-
-
 
 
 #----------------------------------------------------------------------------------

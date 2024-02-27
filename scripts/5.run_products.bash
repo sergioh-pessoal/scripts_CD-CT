@@ -112,7 +112,7 @@ ulimit -s unlimited
 cd ${SCRIPTS}
 
 date
-tim grads -bpcx "run prec.gs"
+time grads -bpcx "run prec.gs"
 date
 
 

@@ -63,7 +63,7 @@ cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 
 cp ${DATAIN}/namelists/include_fields.diag ${SCRIPTS}/include_fields
 ln -sf ${EXECS}/convert_mpas ${SCRIPTS}
-ln -sf ${DATAIN}/fixed/x1.${RES}.init.nc ${SCRIPTS}
+ln -sf ${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc ${SCRIPTS}
 
 
 rm -f ${SCRIPTS}/post.bash 
@@ -77,7 +77,7 @@ cat << EOF0 > ${SCRIPTS}/post.bash
 #SBATCH --time=${POST_walltime}
 #SBATCH --output=${DATAOUT}/${YYYYMMDDHHi}/Post/logs/post.bash.o%j    # File name for standard output
 #SBATCH --error=${DATAOUT}/${YYYYMMDDHHi}/Post/logs/post.bash.e%j     # File name for standard error output
-#SBATCH --exclusive
+##SBATCH --exclusive
 ##SBATCH --mem=500000
 
 
@@ -93,7 +93,7 @@ cd ${SCRIPTS}
 
 rm -f latlon.nc
 date
-time ./\${executable} x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/diag*nc
+time ./\${executable} x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Model/diag*nc
 date
 
 rm -f surface.nc

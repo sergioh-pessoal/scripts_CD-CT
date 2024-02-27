@@ -45,6 +45,7 @@ GEODATA=${DATAIN}/WPS_GEOG
 ncores=${INITATMOS_ncores}
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
+mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
 
 
 sed -e "s,#LABELI#,${start_date},g;s,#GEODAT#,${GEODATA},g" \
@@ -54,11 +55,10 @@ cp ${DATAIN}/namelists/streams.init_atmosphere.TEMPLATE ${SCRIPTS}/streams.init_
 #CR: verificar se existe o arq *part.${ncores}. Caso nao exista, criar um script que gere o arq necessario
 ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores} ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
-ln -sf ${DATAIN}/${YYYYMMDDHHi}/GFS\:${start_date:0:13} ${SCRIPTS}
+ln -sf ${DATAOUT}/${YYYYMMDDHHi}/Pre/GFS\:${start_date:0:13} ${SCRIPTS}
 ln -sf ${EXECS}/init_atmosphere_model ${SCRIPTS}
 
 
-mkdir -p ${DATAOUT}/logs
 rm -f ${SCRIPTS}/initatmos.bash 
 cat << EOF0 > ${SCRIPTS}/initatmos.bash 
 #!/bin/bash
@@ -67,8 +67,8 @@ cat << EOF0 > ${SCRIPTS}/initatmos.bash
 #SBATCH --partition=${INITATMOS_QUEUE} 
 #SBATCH --tasks-per-node=${INITATMOS_ncores}               # only for benchmark
 #SBATCH --time=${STATIC_walltime}
-#SBATCH --output=${DATAOUT}/logs/initatmos.bash.o%j    # File name for standard output
-#SBATCH --error=${DATAOUT}/logs/initatmos.bash.e%j     # File name for standard error output
+#SBATCH --output=${DATAOUT}/${YYYYMMDDHHi}/Pre/logs/initatmos.bash.o%j    # File name for standard output
+#SBATCH --error=${DATAOUT}/${YYYYMMDDHHi}/Pre/logs/initatmos.bash.e%j     # File name for standard error output
 #SBATCH --exclusive
 ##SBATCH --mem=500000
 
@@ -90,10 +90,10 @@ time mpirun -np \${SLURM_NTASKS} -env UCX_NET_DEVICES=mlx5_0:1 -genvall ./\${exe
 date
 
 
-mv ${SCRIPTS}/log.init_atmosphere.0000.out ${DATAOUT}/logs/log.init_atmosphere.0000.x1.${RES}.init.nc.${YYYYMMDDHHi}.out
-mv ${SCRIPTS}/x1.${RES}.init.nc ${DATAIN}/fixed 
-#CR: esse arquivo gerado x1.${RES}.init.nc eh fixo? ou gerado a cada rodada? 
-#CR: (S: veriricar se existe antes de gerar novamente; N: armazena-lo em datain/yyyymmddhh e nao em datain/fixed)
+mv ${SCRIPTS}/log.init_atmosphere.0000.out ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs/log.init_atmosphere.0000.x1.${RES}.init.nc.${YYYYMMDDHHi}.out
+mv namelist.init_atmosphere ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
+mv ${SCRIPTS}/x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Pre
+
 chmod a+x ${DATAIN}/fixed//x1.${RES}.init.nc 
 rm -f ${SCRIPTS}/GFS:2024-01-20_00
 rm -f ${SCRIPTS}/init_atmosphere_model
@@ -108,7 +108,7 @@ echo -e  "${GREEN}==>${NC} Executing sbatch initatmos.bash...\n"
 cd ${SCRIPTS}
 sbatch --wait ${SCRIPTS}/initatmos.bash
 
-if [ ! -s ${DATAIN}/fixed/x1.${RES}.init.nc ]
+if [ ! -s ${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc ]
 then
   echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	
   echo -e  "${RED}==>${NC} Init Atmosphere phase fails! Check logs at ${DATAOUT}/logs/initatmos.* .\n"
