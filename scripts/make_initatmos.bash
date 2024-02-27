@@ -1,20 +1,24 @@
-#!/bin/bash
-
 #!/bin/bash 
 
 
-if [ $# -ne 2 ]
+if [ $# -ne 4 ]
 then
    echo ""
    echo "Instructions: execute the command below"
    echo ""
-   echo "${0} LABELI"
+   echo "${0} EXP_NAME RESOLUTION LABELI FCST"
    echo ""
-   echo "LABELI      :: Initial date, e.g.: 2015030600"
+   echo "EXP_NAME    :: Forcing: GFS"
+   echo "            :: Others options to be added later..."
    echo "RESOLUTION  :: number of points in resolution model grid, e.g: 1024002  (24 km)"
+   echo "LABELI      :: Initial date YYYYMMDDHH, e.g.: 2024010100"
+   echo "FCST        :: Forecast hours, e.g.: 24 or 36, etc."
+   echo ""
+   echo "24 hour forcast example:"
+   echo "${0} GFS 1024002 2024010100 24"
    echo ""
 
-#   exit
+   exit
 fi
 
 # Set environment variables exports:
@@ -34,8 +38,10 @@ EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 
 
 # Input variables:--------------------------------------
-YYYYMMDDHHi=${1};    YYYYMMDDHHi=2024012000
-RES=${2};            RES=1024002
+EXP=${1};         #EXP=GFS
+RES=${2};         #RES=1024002
+YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
+FCST=${4};        #FCST=24
 #-------------------------------------------------------
 
 
@@ -92,10 +98,11 @@ date
 
 mv ${SCRIPTS}/log.init_atmosphere.0000.out ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs/log.init_atmosphere.0000.x1.${RES}.init.nc.${YYYYMMDDHHi}.out
 mv namelist.init_atmosphere ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
+mv streams.init_atmosphere ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
 mv ${SCRIPTS}/x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Pre
 
 chmod a+x ${DATAIN}/fixed//x1.${RES}.init.nc 
-rm -f ${SCRIPTS}/GFS:2024-01-20_00
+rm -f ${SCRIPTS}/GFS\:${start_date:0:13}
 rm -f ${SCRIPTS}/init_atmosphere_model
 rm -f ${SCRIPTS}/x1.1024002.graph.info.part.32
 rm -f ${SCRIPTS}/x1.1024002.static.nc

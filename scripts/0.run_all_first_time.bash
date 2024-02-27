@@ -41,33 +41,34 @@ github_link=${1}; #github_link=https://github.com/carlosrenatosouza2/MONAN-Model
 EXP=${2};         #EXP=GFS
 RES=${3};         #RES=1024002
 YYYYMMDDHHi=${4}; #YYYYMMDDHHi=2024012000
-FCST=${5};        FCST=24
+FCST=${5};        #FCST=24
 #----------------------------------------------------------------------
 
 
 # STEP 1: Installing and compiling the A-MONAN model and utility programs:
+#~2m22s
 
-1.install_monan.bash ${github_link}
-
+time 1.install_monan.bash ${github_link}
 
 
 # STEP 2: Executing the pre-processing fase. Preparing all CI/CC files needed:
 
-2.pre_processing.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} 
+time 2.pre_processing.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} 
 
 
 
 # STEP 3: Executing the Model run:
 
-3.run_model.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} 
+time 3.run_model.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} 
 
 
 
 # STEP 4: Executing the Post of Model run:
 
-4.run_post.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} 
+time 4.run_post.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} 
+
 
 
 # STEP 5: Executing the Products
 
-5.run_products.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} 
+time 5.run_products.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} 

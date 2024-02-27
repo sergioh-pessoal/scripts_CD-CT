@@ -1,5 +1,3 @@
-#!/bin/bash
-
 #!/bin/bash 
 #-----------------------------------------------------------------------------#
 # !SCRIPT: run_model
@@ -143,7 +141,7 @@ rm -f ${SCRIPTS}/x1.${RES}.static.nc
 rm -f ${SCRIPTS}/x1.${RES}.graph.info.part.${ncores}
 rm -f ${SCRIPTS}/Vtable.GFS
 rm -f ${SCRIPTS}/Vtable.ERA-interim.pl
-
+rm -f ${SCRIPTS}/x1.${RES}.init.nc
 
 
 

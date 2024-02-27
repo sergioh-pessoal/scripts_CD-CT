@@ -63,11 +63,6 @@ cp -f setenv.bash ${SCRIPTS}
 
 
 # Local variables--------------------------------------
-# from script 1:--- (keep it only if was usefull) -----
-vlabel="v0.1.0"
-MONANDIR=${SOURCES}/MONAN-Model_${vlabel}
-CONVERT_MPAS_DIR=${SOURCES}/convert_mpas
-branch_name="develop"
 # Calculating CIs and final forecast dates in model namelist format:
 yyyymmddi=${yyyymmddhhi:0:8}
 hhi=${yyyymmddhhi:8:2}
@@ -88,15 +83,18 @@ cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 # x1.${RES}.graph.info.part.<Ncores> files can be found in datain/fixed
 # *.TBL files can be found in datain/fixed
 # x1.${RES}.grid.nc can be found in datain/fixed
+#~12m30s
 echo -e  "${GREEN}==>${NC} Copying and decompressing input data... \n"
-tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOME}
+time tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOME}
 
 
 # Creating the x1.${RES}.static.nc file once, if does not exist yet:---------------
 if [ ! -s ${DATAIN}/fixed/x1.${RES}.static.nc ]
 then
    echo -e "${GREEN}==>${NC} Creating static.bash for submiting init_atmosphere to create x1.${RES}.static.nc...\n"
-   ./make_static.bash ${RES}
+#   ./make_static.bash ${RES}
+   #~8m44
+   time ./make_static.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST}
 else
    echo -e "${GREEN}==>${NC} File x1.${RES}.static.nc already exist in ${DATAIN}/fixed.\n"
 fi
@@ -107,11 +105,12 @@ fi
 # Degrib phase:---------------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting Degrib...\n"
 #./make_degrib.bash ${yyyymmddhhi} ${EXP} ${RES}
-
+#
+time ./make_degrib.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST}
 
 # Init Atmosphere phase:------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting Init Atmosphere...\n"
-./make_initatmos.bash
+time ./make_initatmos.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST}
 
 
 #----------------------------------------------------------------------------------

@@ -36,12 +36,12 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 
 
 # Standart directories variables:---------------------------------------
-DIRHOME=${DIRWORK}/../../MONAN;   rm -fr ${DIRHOME}; mkdir -p ${DIRHOME}  #CR: Remove rmdir after all is developed (or not?)!
-SCRIPTS=${DIRHOME}/scripts;   mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOME}/datain;     mkdir -p ${DATAIN}
-DATAOUT=${DIRHOME}/dataout;   mkdir -p ${DATAOUT}
-SOURCES=${DIRHOME}/sources;   mkdir -p ${SOURCES}
-EXECS=${DIRHOME}/execs;       mkdir -p ${EXECS}
+DIRHOME=${DIRWORK}/../../MONAN;  rm -fr ${DIRHOME}; mkdir -p ${DIRHOME}  #CR: Remove rmdir after all is developed (or not?)!
+SCRIPTS=${DIRHOME}/scripts;      mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOME}/datain;        mkdir -p ${DATAIN}
+DATAOUT=${DIRHOME}/dataout;      mkdir -p ${DATAOUT}
+SOURCES=${DIRHOME}/sources;      mkdir -p ${SOURCES}
+EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
 #----------------------------------------------------------------------
 
 
