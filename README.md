@@ -25,6 +25,7 @@ scripts
 olds
 ~~~
 The `olds` directory should be ignored for while.
+
 The `namelists` directory contains all versioned namelists needded for run and compile all phases of model;
 The `scripts` directory is the most important folder that contains all the scripts that you will need to install, compile, run, and produce produtcs of the A-MONAN model.
 
