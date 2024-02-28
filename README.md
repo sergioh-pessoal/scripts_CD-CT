@@ -24,12 +24,13 @@ namelists
 scripts
 olds
 ~~~
-The `olds` directory should be ignored for while.
+- The `olds` directory should be ignored for while.
+- The `namelists` directory contains all versioned namelists needded for run and compile all phases of model;
+- The `scripts` directory is the most important folder that contains all the scripts that you will need to install, compile, run, and produce produtcs of the A-MONAN model.
 
-The `namelists` directory contains all versioned namelists needded for run and compile all phases of model;
-The `scripts` directory is the most important folder that contains all the scripts that you will need to install, compile, run, and produce produtcs of the A-MONAN model.
 
 You will need to execute only 6 steps scripts, so you can run the Atmospheric MONAN Model:
+
 
 **1. Install the model:**
 
@@ -51,15 +52,15 @@ MONAN/
 ~~~
 
 Where:
-`scripts` folder will contain all scripts produced to run all steps of the model;
-`sources` folder will contain all codes of any processes that uses compiled programming languages, such as MONAN model sources, convert_mpas sources, etc.
-`execs` folder will contain all the executables needed;
-`datain` folder will contain all the input data that the model need to run;
-`dataout` folder will contain all the output files generated of running of the MONAN, such as:
-     `dataout\Pre\<YYYYMMDDHH>` will contain all the output files from the pre-processing phase, mostly are all the initial condition for run the MONAN;
-     `dataout\Model\<YYYYMMDDHH>` will contain all the output files from the MONAN model;
-     `dataout\Post\<YYYYMMDDHH>` will contain all the output files from the post-processing phase of the MONAN;
-     `dataout\Prods\<YYYYMMDDHH>` will contain all the output files from the products generated, graphics, derivated variables, peace of domain, etc.
+- `scripts` folder will contain all scripts produced to run all steps of the model;
+- `sources` folder will contain all codes of any processes that uses compiled programming languages, such as MONAN model sources, convert_mpas sources, etc.
+- `execs` folder will contain all the executables needed;
+- `datain` folder will contain all the input data that the model need to run;
+- `dataout` folder will contain all the output files generated of running of the MONAN, such as:
+     - `dataout\Pre\<YYYYMMDDHH>` will contain all the output files from the pre-processing phase, mostly are all the initial condition for run the MONAN;
+     - `dataout\Model\<YYYYMMDDHH>` will contain all the output files from the MONAN model;
+     - `dataout\Post\<YYYYMMDDHH>` will contain all the output files from the post-processing phase of the MONAN;
+     - `dataout\Prods\<YYYYMMDDHH>` will contain all the output files from the products generated, graphics, derivated variables, peace of domain, etc.
 
 After running the first step, it will clone the MONAN model from your fork repo in a `source` diretory.
 
