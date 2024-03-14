@@ -24,8 +24,10 @@ module list
 # Set environment variables and importants directories
 
 
-# MONAN-suite install root directory:
-export DIRWORK=$(pwd)
+# MONAN-suite install root directories:
+export DIRWORK=$(pwd)   # old one will not be used any more
+export DIR_SCRIPTS=/mnt/beegfs/carlos.souza/repo_Monan/dirscripts
+export DIR_DADOS=/mnt/beegfs/carlos.souza/repo_Monan/dirdados
 
 # Others variables:
 export OMP_NUM_THREADS=1
