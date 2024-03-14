@@ -17,7 +17,7 @@ then
    echo "24 hour forcast example:"
    echo "${0} https://github.com/MYUSER/MONAN-Model.git GFS 1024002 2024010100 24"
    echo ""
-   exit
+#   exit
 fi
 
 # Set environment variables exports:
@@ -26,22 +26,24 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 . setenv.bash
 
 
-# Standart directories variables:
-DIRHOME=${DIRWORK}/../../MONAN;  rm -fr ${DIRHOME}; mkdir -p ${DIRHOME}  #CR: Remove rmdir when develope its done. (or not?)!
-SCRIPTS=${DIRHOME}/scripts;      mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOME}/datain;        mkdir -p ${DATAIN}
-DATAOUT=${DIRHOME}/dataout;      mkdir -p ${DATAOUT}
-SOURCES=${DIRHOME}/sources;      mkdir -p ${SOURCES}
-EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
+# Standart directories variables:---------------------------------------
+DIRHOMES=${DIR_SCRIPTS}/MONAN;   rm -fr ${DIRHOMES}; mkdir -p ${DIRHOMES}  
+DIRHOMED=${DIR_DADOS}/MONAN;     rm -fr ${DIRHOMED}; mkdir -p ${DIRHOMED}  
+SCRIPTS=${DIRHOMES}/scripts;     mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOMED}/datain;       mkdir -p ${DATAIN}
+DATAOUT=${DIRHOMED}/dataout;     mkdir -p ${DATAOUT}
+SOURCES=${DIRHOMES}/sources;     mkdir -p ${SOURCES}
+EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
+#----------------------------------------------------------------------
 
 
 
 # Input variables:-----------------------------------------------------
-github_link=${1}; #github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
-EXP=${2};         #EXP=GFS
-RES=${3};         #RES=1024002
-YYYYMMDDHHi=${4}; #YYYYMMDDHHi=2024012000
-FCST=${5};        #FCST=24
+github_link=${1}; github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
+EXP=${2};         EXP=GFS
+RES=${3};         RES=1024002
+YYYYMMDDHHi=${4}; YYYYMMDDHHi=2024012000
+FCST=${5};        FCST=24
 #----------------------------------------------------------------------
 
 
@@ -55,7 +57,7 @@ time 1.install_monan.bash ${github_link}
 
 time 2.pre_processing.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} 
 
-
+exit
 
 # STEP 3: Executing the Model run:
 

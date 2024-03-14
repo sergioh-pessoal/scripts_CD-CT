@@ -34,7 +34,7 @@ then
    echo "${0} GFS 1024002 2024010100 24"
    echo ""
 
-   exit
+#   exit
 fi
 
 # Set environment variables exports:
@@ -43,29 +43,30 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 . setenv.bash
 
 
-# Standart directories variables:----------------------
-DIRHOME=${DIRWORK}/../../MONAN;  mkdir -p ${DIRHOME}
-SCRIPTS=${DIRHOME}/scripts;      mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOME}/datain;        mkdir -p ${DATAIN}
-DATAOUT=${DIRHOME}/dataout;      mkdir -p ${DATAOUT}
-SOURCES=${DIRHOME}/sources;      mkdir -p ${SOURCES}
-EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
-#-------------------------------------------------------
+# Standart directories variables:---------------------------------------
+DIRHOMES=${DIR_SCRIPTS}/MONAN;   mkdir -p ${DIRHOMES}  
+DIRHOMED=${DIR_DADOS}/MONAN;     mkdir -p ${DIRHOMED}  
+SCRIPTS=${DIRHOMES}/scripts;     mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOMED}/datain;       mkdir -p ${DATAIN}
+DATAOUT=${DIRHOMED}/dataout;     mkdir -p ${DATAOUT}
+SOURCES=${DIRHOMES}/sources;     mkdir -p ${SOURCES}
+EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
+#----------------------------------------------------------------------
 
 
 # Input variables:--------------------------------------
-EXP=${1};         #EXP=GFS
-RES=${2};         #RES=1024002
-YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
-FCST=${4};        #FCST=24
+EXP=${1};         EXP=GFS
+RES=${2};         RES=1024002
+YYYYMMDDHHi=${3}; YYYYMMDDHHi=2024012000
+FCST=${4};        FCST=24
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 
 
 # Local variables--------------------------------------
 # Calculating CIs and final forecast dates in model namelist format:
-yyyymmddi=${yyyymmddhhi:0:8}
-hhi=${yyyymmddhhi:8:2}
+yyyymmddi=${YYYYMMDDHHi:0:8}
+hhi=${YYYYMMDDHHi:8:2}
 yyyymmddhhf=$(date +"%Y%m%d%H" -d "${yyyymmddi} ${hhi}:00 ${FCST} hours" )
 final_date=${yyyymmddhhf:0:4}-${yyyymmddhhf:4:2}-${yyyymmddhhf:6:2}_${yyyymmddhhf:8:2}.00.00
 #-------------------------------------------------------
@@ -75,25 +76,19 @@ mkdir -p ${DATAIN}/namelists
 cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 
 
-
-
-
-
 # Untar the fixed files:
 # x1.${RES}.graph.info.part.<Ncores> files can be found in datain/fixed
 # *.TBL files can be found in datain/fixed
 # x1.${RES}.grid.nc can be found in datain/fixed
 #~12m30s
 echo -e  "${GREEN}==>${NC} Copying and decompressing input data... \n"
-time tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOME}
+time tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOMED}
 
 
 # Creating the x1.${RES}.static.nc file once, if does not exist yet:---------------
 if [ ! -s ${DATAIN}/fixed/x1.${RES}.static.nc ]
 then
    echo -e "${GREEN}==>${NC} Creating static.bash for submiting init_atmosphere to create x1.${RES}.static.nc...\n"
-#   ./make_static.bash ${RES}
-   #~8m44
    time ./make_static.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST}
 else
    echo -e "${GREEN}==>${NC} File x1.${RES}.static.nc already exist in ${DATAIN}/fixed.\n"
@@ -104,9 +99,8 @@ fi
 
 # Degrib phase:---------------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting Degrib...\n"
-#./make_degrib.bash ${yyyymmddhhi} ${EXP} ${RES}
-#
 time ./make_degrib.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST}
+
 
 # Init Atmosphere phase:------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting Init Atmosphere...\n"

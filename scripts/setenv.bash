@@ -73,6 +73,7 @@ export INITATMOS_ncpn=
 export INITATMOS_jobname="Pre.InitAtmos"
 export INITATMOS_walltime="01:00:00"
 
+
 # Model phase:
 export MODEL_QUEUE=batch
 export MODEL_ncores=1024
@@ -80,6 +81,7 @@ export MODEL_nnodes=16
 export MODEL_ncpn=64
 export MODEL_jobname="Model.MONAN"
 export MODEL_walltime="4:00:00"
+
 
 # Post phase:
 export POST_QUEUE="batch"
