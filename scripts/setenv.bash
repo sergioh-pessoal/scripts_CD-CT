@@ -76,9 +76,9 @@ export INITATMOS_walltime="01:00:00"
 
 # Model phase:
 export MODEL_QUEUE=batch
-export MODEL_ncores=1024
-export MODEL_nnodes=16
-export MODEL_ncpn=64
+export MODEL_ncores=512
+export MODEL_nnodes=4
+export MODEL_ncpn=128
 export MODEL_jobname="Model.MONAN"
 export MODEL_walltime="4:00:00"
 

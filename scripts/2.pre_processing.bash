@@ -34,7 +34,7 @@ then
    echo "${0} GFS 1024002 2024010100 24"
    echo ""
 
-#   exit
+   exit
 fi
 
 # Set environment variables exports:
@@ -55,10 +55,10 @@ EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
 
 
 # Input variables:--------------------------------------
-EXP=${1};         EXP=GFS
-RES=${2};         RES=1024002
-YYYYMMDDHHi=${3}; YYYYMMDDHHi=2024012000
-FCST=${4};        FCST=24
+EXP=${1};         #EXP=GFS
+RES=${2};         #RES=1024002
+YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
+FCST=${4};        #FCST=24
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 
