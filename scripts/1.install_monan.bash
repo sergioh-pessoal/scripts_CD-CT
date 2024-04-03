@@ -26,7 +26,7 @@ then
    echo "${0} [G]"
    echo ""
    echo "G   :: GitHub link for your personal fork, eg: https://github.com/MYUSER/MONAN-Model.git"
-   exit
+#   exit
 fi
 
 # Set environment variables exports:
@@ -36,17 +36,18 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 
 
 # Standart directories variables:---------------------------------------
-DIRHOME=${DIRWORK}/../../MONAN;  rm -fr ${DIRHOME}; mkdir -p ${DIRHOME}  #CR: Remove rmdir after all is developed (or not?)!
-SCRIPTS=${DIRHOME}/scripts;      mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOME}/datain;        mkdir -p ${DATAIN}
-DATAOUT=${DIRHOME}/dataout;      mkdir -p ${DATAOUT}
-SOURCES=${DIRHOME}/sources;      mkdir -p ${SOURCES}
-EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
+DIRHOMES=${DIR_SCRIPTS}/MONAN;   rm -fr ${DIRHOMES}; mkdir -p ${DIRHOMES}  
+DIRHOMED=${DIR_DADOS}/MONAN;     rm -fr ${DIRHOMED}; mkdir -p ${DIRHOMED}  
+SCRIPTS=${DIRHOMES}/scripts;     mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOMED}/datain;       mkdir -p ${DATAIN}
+DATAOUT=${DIRHOMED}/dataout;     mkdir -p ${DATAOUT}
+SOURCES=${DIRHOMES}/sources;     mkdir -p ${SOURCES}
+EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
 #----------------------------------------------------------------------
 
 
 # Input variables:-----------------------------------------------------
-github_link=${1}; #github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
+github_link=${1}; github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
 #----------------------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 

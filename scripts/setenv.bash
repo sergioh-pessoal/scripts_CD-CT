@@ -24,8 +24,10 @@ module list
 # Set environment variables and importants directories
 
 
-# MONAN-suite install root directory:
-export DIRWORK=$(pwd)
+# MONAN-suite install root directories:
+export DIRWORK=$(pwd)   # old one will not be used any more
+export DIR_SCRIPTS=/mnt/beegfs/carlos.souza/repo_Monan/dirscripts
+export DIR_DADOS=/mnt/beegfs/carlos.souza/repo_Monan/dirdados
 
 # Others variables:
 export OMP_NUM_THREADS=1
@@ -71,13 +73,15 @@ export INITATMOS_ncpn=
 export INITATMOS_jobname="Pre.InitAtmos"
 export INITATMOS_walltime="01:00:00"
 
+
 # Model phase:
 export MODEL_QUEUE=batch
-export MODEL_ncores=1024
-export MODEL_nnodes=16
-export MODEL_ncpn=64
+export MODEL_ncores=512
+export MODEL_nnodes=4
+export MODEL_ncpn=128
 export MODEL_jobname="Model.MONAN"
 export MODEL_walltime="4:00:00"
+
 
 # Post phase:
 export POST_QUEUE="batch"

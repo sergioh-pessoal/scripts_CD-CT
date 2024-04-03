@@ -41,21 +41,23 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 . setenv.bash
 
 
-# Standart directories variables:----------------------
-DIRHOME=${DIRWORK}/../../MONAN;  mkdir -p ${DIRHOME}
-SCRIPTS=${DIRHOME}/scripts;      mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOME}/datain;        mkdir -p ${DATAIN}
-DATAOUT=${DIRHOME}/dataout;      mkdir -p ${DATAOUT}
-SOURCES=${DIRHOME}/sources;      mkdir -p ${SOURCES}
-EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
-#-------------------------------------------------------
+# Standart directories variables:---------------------------------------
+DIRHOMES=${DIR_SCRIPTS}/MONAN;   mkdir -p ${DIRHOMES}  
+DIRHOMED=${DIR_DADOS}/MONAN;     mkdir -p ${DIRHOMED}  
+SCRIPTS=${DIRHOMES}/scripts;     mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOMED}/datain;       mkdir -p ${DATAIN}
+DATAOUT=${DIRHOMED}/dataout;     mkdir -p ${DATAOUT}
+SOURCES=${DIRHOMES}/sources;     mkdir -p ${SOURCES}
+EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
+#----------------------------------------------------------------------
+
 
 
 # Input variables:--------------------------------------
 EXP=${1};         #EXP=GFS
 RES=${2};         #RES=1024002
 YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
-FCST=${4};        #FCST=24
+FCST=${4};        #FCST=6
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 
@@ -64,7 +66,7 @@ cp -f setenv.bash ${SCRIPTS}
 #-------------------------------------------------------
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Prods/logs
 
-
+# modificar o script grads para gerar a figura correta, com o tempo correto, como é feito na operacao normalmente.
 cat << EOGS > ${SCRIPTS}/prec.gs
 'reinit'
 
@@ -78,7 +80,7 @@ cat << EOGS > ${SCRIPTS}/prec.gs
 
 'set lon -83.75 -20.05'
 'set lat -55.75 14.25'
-'set t 1'
+'set t 2'
 'pr1=rainc+rainnc'
 'set t 25'
 'pr25=rainc+rainnc'

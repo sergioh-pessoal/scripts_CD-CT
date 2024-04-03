@@ -41,21 +41,22 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 . setenv.bash
 
 
-# Standart directories variables:----------------------
-DIRHOME=${DIRWORK}/../../MONAN;  mkdir -p ${DIRHOME}
-SCRIPTS=${DIRHOME}/scripts;      mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOME}/datain;        mkdir -p ${DATAIN}
-DATAOUT=${DIRHOME}/dataout;      mkdir -p ${DATAOUT}
-SOURCES=${DIRHOME}/sources;      mkdir -p ${SOURCES}
-EXECS=${DIRHOME}/execs;          mkdir -p ${EXECS}
-#-------------------------------------------------------
+# Standart directories variables:---------------------------------------
+DIRHOMES=${DIR_SCRIPTS}/MONAN;   mkdir -p ${DIRHOMES}  
+DIRHOMED=${DIR_DADOS}/MONAN;     mkdir -p ${DIRHOMED}  
+SCRIPTS=${DIRHOMES}/scripts;     mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOMED}/datain;       mkdir -p ${DATAIN}
+DATAOUT=${DIRHOMED}/dataout;     mkdir -p ${DATAOUT}
+SOURCES=${DIRHOMES}/sources;     mkdir -p ${SOURCES}
+EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
+#----------------------------------------------------------------------
 
 
 # Input variables:--------------------------------------
 EXP=${1};         #EXP=GFS
 RES=${2};         #RES=1024002
 YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
-FCST=${4};        #FCST=24
+FCST=${4};        #FCST=6
 #-------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
@@ -64,10 +65,25 @@ mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
 # Local variables--------------------------------------
 start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}:00:00
 ncores=${MODEL_ncores}
+hhi=${YYYYMMDDHHi:8:2}
 #-------------------------------------------------------
 mkdir -p ${DATAIN}/namelists
 cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 
+# Calculating final forecast dates in model namelist format: DD_HH:MM:SS 
+# using: start_date(yyyymmdd) + FCST(hh) :
+ind=$(printf "%02d\n" $(echo "${FCST}/24" | bc))
+inh=$(printf "%02.0f\n" $(echo "((${FCST}/24)-${ind})*24" | bc -l))
+DD_HHMMSS_forecast=$(echo "${ind}_${inh}:00:00")
+
+
+if [ ! -s ${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores} ]
+then
+   echo -e "${RED}==>${NC} File x1.${RES}.graph.info.part.${ncores} does not exist in ${DATAIN}/fixed.\n"
+   echo -e "${RED}==>${NC} Need to be created: module load metis/5.1.0, and follow the instructions:\n"
+   echo -e "${RED}==>${NC} ...maybe create a script to do that in the future... \n"
+   exit
+fi
 
 
 #CR: verify if input files exist before submit the model:
@@ -85,10 +101,13 @@ ln -sf ${DATAIN}/fixed/Vtable.ERA-interim.pl ${SCRIPTS}
 if [ ${EXP} = "GFS" ]
 then
    sed -e "s,#LABELI#,${start_date},g" \
-         ${DATAIN}/namelists/namelist.atmosphere.TEMPLATE > ${SCRIPTS}/namelist.atmosphere
+         ${DATAIN}/namelists/namelist.atmosphere.TEMPLATE > ${SCRIPTS}/namelist.atmosphere.1
+   sed -e "s,#FCSTS#,${DD_HHMMSS_forecast},g" \
+         ${SCRIPTS}/namelist.atmosphere.1 > ${SCRIPTS}/namelist.atmosphere
+   rm -f ${SCRIPTS}/namelist.atmosphere.1
    cp -f ${DATAIN}/namelists/streams.atmosphere.TEMPLATE ${SCRIPTS}/streams.atmosphere
 fi
-cp ${DATAIN}/namelists//stream_list.atmosphere.* ${SCRIPTS}
+cp -f ${DATAIN}/namelists/stream_list.atmosphere.* ${SCRIPTS}
 
 
 rm -f ${SCRIPTS}/model.bash 
