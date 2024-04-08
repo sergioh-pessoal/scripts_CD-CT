@@ -52,8 +52,15 @@ GEODATA=${DATAIN}/WPS_GEOG
 cores=${STATIC_ncores}
 #-------------------------------------------------------
 
+files_needed=("${EXECS}/init_atmosphere_model" "${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores}" "${DATAIN}/fixed/x1.${RES}.grid.nc" "${DATAIN}/namelists/namelist.init_atmosphere.STATIC" "${DATAIN}/namelists/streams.init_atmosphere.STATIC")
+for file in "${files_needed[@]}"; do
+  if [[ ! -s "${file}" ]]; then
+    echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	  
+    echo -e  "${RED}==>${NC} [${0}] At least the file ${file} was not generated. \n"
+    exit -1
+  fi
+done
 
-#CR: TODO: important verify if exist each file below:
 ln -sf ${DATAIN}/fixed/*.TBL ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/*.GFS ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/Vtable.ERA-interim.pl ${SCRIPTS}

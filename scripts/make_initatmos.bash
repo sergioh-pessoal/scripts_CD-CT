@@ -55,6 +55,16 @@ cp -f setenv.bash ${SCRIPTS}
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
 
 
+files_needed=("${DATAIN}/namelists/namelist.init_atmosphere.TEMPLATE" "${DATAIN}/namelists/streams.init_atmosphere.TEMPLATE" "${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores}" "${DATAIN}/fixed/x1.${RES}.static.nc" "${DATAOUT}/${YYYYMMDDHHi}/Pre/${EXP}:${start_date:0:13}" "${EXECS}/init_atmosphere_model")
+for file in "${files_needed[@]}"; do
+  if [[ ! -s "${file}" ]]; then
+    echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	  
+    echo -e  "${RED}==>${NC} [${0}] At least the file ${file} was not generated. \n"
+    exit -1
+  fi
+done
+
+
 sed -e "s,#LABELI#,${start_date},g;s,#GEODAT#,${GEODATA},g;s,#RES#,${RES},g" \
 	 ${DATAIN}/namelists/namelist.init_atmosphere.TEMPLATE > ${SCRIPTS}/namelist.init_atmosphere
 
@@ -66,7 +76,7 @@ sed -e "s,#RES#,${RES},g" \
 #CR: verificar se existe o arq *part.${ncores}. Caso nao exista, criar um script que gere o arq necessario
 ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores} ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
-ln -sf ${DATAOUT}/${YYYYMMDDHHi}/Pre/GFS\:${start_date:0:13} ${SCRIPTS}
+ln -sf ${DATAOUT}/${YYYYMMDDHHi}/Pre/${EXP}\:${start_date:0:13} ${SCRIPTS}
 ln -sf ${EXECS}/init_atmosphere_model ${SCRIPTS}
 
 
@@ -107,7 +117,7 @@ mv streams.init_atmosphere ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
 mv ${SCRIPTS}/x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Pre
 
 chmod a+x ${DATAIN}/fixed//x1.${RES}.init.nc 
-rm -f ${SCRIPTS}/GFS\:${start_date:0:13}
+rm -f ${SCRIPTS}/${EXP}\:${start_date:0:13}
 rm -f ${SCRIPTS}/init_atmosphere_model
 rm -f ${SCRIPTS}/x1.${RES}.graph.info.part.${ncores}
 rm -f ${SCRIPTS}/x1.${RES}.static.nc

@@ -67,6 +67,15 @@ then
    exit 1                     
 fi
 
+files_needed=("${DATAIN}/fixed/x1.${RES}.static.nc" "${DATAIN}/fixed/Vtable.${EXP}" "${EXECS}/ungrib.exe" "${BNDDIR}/gfs.t00z.pgrb2.0p25.f000.${YYYYMMDDHHi}.grib2")
+for file in "${files_needed[@]}"; do
+  if [[ ! -s "${file}" ]]; then
+    echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	  
+    echo -e  "${RED}==>${NC} [${0}] At least the file ${file} was not generated. \n"
+    exit -1
+  fi
+done
+
 ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/Vtable.${EXP} ${SCRIPTS}/Vtable
 ln -sf ${EXECS}/ungrib.exe ${SCRIPTS}
