@@ -26,7 +26,7 @@ then
    echo "${0} [G]"
    echo ""
    echo "G   :: GitHub link for your personal fork, eg: https://github.com/MYUSER/MONAN-Model.git"
-#   exit
+   exit
 fi
 
 # Set environment variables exports:
@@ -47,7 +47,7 @@ EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
 
 
 # Input variables:-----------------------------------------------------
-github_link=${1}; github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
+github_link=${1}; #github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
 #----------------------------------------------------------------------
 cp -f setenv.bash ${SCRIPTS}
 
