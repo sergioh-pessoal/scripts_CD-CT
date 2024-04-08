@@ -67,7 +67,7 @@ export DEGRIB_walltime="00:30:00"
 
 # PRE-Init Atmosphere phase:
 export INITATMOS_QUEUE="batch"
-export INITATMOS_ncores=32
+export INITATMOS_ncores=64
 export INITATMOS_nnodes=1
 export INITATMOS_ncpn=
 export INITATMOS_jobname="Pre.InitAtmos"

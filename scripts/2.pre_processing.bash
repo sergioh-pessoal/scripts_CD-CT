@@ -27,6 +27,7 @@ then
    echo "EXP_NAME    :: Forcing: GFS"
    echo "            :: Others options to be added later..."
    echo "RESOLUTION  :: number of points in resolution model grid, e.g: 1024002  (24 km)"
+   echo "                                                                 40962  (120 km)"
    echo "LABELI      :: Initial date YYYYMMDDHH, e.g.: 2024010100"
    echo "FCST        :: Forecast hours, e.g.: 24 or 36, etc."
    echo ""
@@ -100,13 +101,13 @@ fi
 # Degrib phase:---------------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting Degrib...\n"
 time ./make_degrib.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST}
+#----------------------------------------------------------------------------------
+
 
 
 # Init Atmosphere phase:------------------------------------------------------------
 echo -e  "${GREEN}==>${NC} Submiting Init Atmosphere...\n"
 time ./make_initatmos.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST}
-
-
 #----------------------------------------------------------------------------------
 
 

@@ -55,10 +55,14 @@ cp -f setenv.bash ${SCRIPTS}
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
 
 
-sed -e "s,#LABELI#,${start_date},g;s,#GEODAT#,${GEODATA},g" \
+sed -e "s,#LABELI#,${start_date},g;s,#GEODAT#,${GEODATA},g;s,#RES#,${RES},g" \
 	 ${DATAIN}/namelists/namelist.init_atmosphere.TEMPLATE > ${SCRIPTS}/namelist.init_atmosphere
 
-cp ${DATAIN}/namelists/streams.init_atmosphere.TEMPLATE ${SCRIPTS}/streams.init_atmosphere
+
+sed -e "s,#RES#,${RES},g" \
+    ${DATAIN}/namelists/streams.init_atmosphere.TEMPLATE > ${SCRIPTS}/streams.init_atmosphere
+
+
 #CR: verificar se existe o arq *part.${ncores}. Caso nao exista, criar um script que gere o arq necessario
 ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores} ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
@@ -105,8 +109,8 @@ mv ${SCRIPTS}/x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Pre
 chmod a+x ${DATAIN}/fixed//x1.${RES}.init.nc 
 rm -f ${SCRIPTS}/GFS\:${start_date:0:13}
 rm -f ${SCRIPTS}/init_atmosphere_model
-rm -f ${SCRIPTS}/x1.1024002.graph.info.part.32
-rm -f ${SCRIPTS}/x1.1024002.static.nc
+rm -f ${SCRIPTS}/x1.${RES}.graph.info.part.${ncores}
+rm -f ${SCRIPTS}/x1.${RES}.static.nc
 rm -f ${SCRIPTS}/log.init_atmosphere.*.err
 
 EOF0
