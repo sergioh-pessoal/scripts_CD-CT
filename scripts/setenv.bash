@@ -13,6 +13,7 @@ module load hwloc
 module load phdf5
 module load cdo-2.0.4-gcc-9.4.0-bjulvnd
 module load opengrads-2.2.1
+module load metis
 module list
 
 
@@ -21,33 +22,19 @@ module list
 
 
 
-# Set environment variables and importants directories
+# Set environment variables and importants directories-------------------------------------------------- 
 
 
 # MONAN-suite install root directories:
+# Put your directories:
 export DIRWORK=$(pwd)   # old one will not be used any more
-export DIR_SCRIPTS=/mnt/beegfs/carlos.souza/repo_Monan/dirscripts
-export DIR_DADOS=/mnt/beegfs/carlos.souza/repo_Monan/dirdados
-
-# Others variables:
-export OMP_NUM_THREADS=1
-export OMPI_MCA_btl_openib_allow_ib=1
-export OMPI_MCA_btl_openib_if_include="mlx5_0:1"
-export PMIX_MCA_gds=hash
-export MPI_PARAMS="-iface ib0 -bind-to core -map-by core"
-
-# Libraries paths:
-export NETCDF=/mnt/beegfs/monan/libs/netcdf
-export PNETCDF=/mnt/beegfs/monan/libs/PnetCDF
-export NETCDFDIR=${NETCDF}
-export PNETCDFDIR=${PNETCDF}
-export DIRDADOS=/mnt/beegfs/monan/dados/MONAN_v0.1.0
-export OPERDIR=/oper/dados/ioper/tempo
+export DIR_SCRIPTS=/mnt/beegfs/carlos.souza/repo_Monan
+export DIR_DADOS=/mnt/beegfs/carlos.souza/repo_Monan
 
 
 
 
-# Submiting variables:--------------------------------------------------
+# Submiting variables:
 
 # PRE-Static phase:
 export STATIC_QUEUE="batch"
@@ -69,7 +56,7 @@ export DEGRIB_walltime="00:30:00"
 export INITATMOS_QUEUE="batch"
 export INITATMOS_ncores=64
 export INITATMOS_nnodes=1
-export INITATMOS_ncpn=
+export INITATMOS_ncpn=1
 export INITATMOS_jobname="Pre.InitAtmos"
 export INITATMOS_walltime="01:00:00"
 
@@ -102,9 +89,22 @@ export PRODS_walltime="8:00:00"
 
 
 #-----------------------------------------------------------------------
+# We discourage changing the variables below:
 
+# Others variables:
+export OMP_NUM_THREADS=1
+export OMPI_MCA_btl_openib_allow_ib=1
+export OMPI_MCA_btl_openib_if_include="mlx5_0:1"
+export PMIX_MCA_gds=hash
+export MPI_PARAMS="-iface ib0 -bind-to core -map-by core"
 
-
+# Libraries paths:
+export NETCDF=/mnt/beegfs/monan/libs/netcdf
+export PNETCDF=/mnt/beegfs/monan/libs/PnetCDF
+export NETCDFDIR=${NETCDF}
+export PNETCDFDIR=${PNETCDF}
+export DIRDADOS=/mnt/beegfs/monan/dados/MONAN_v0.1.0
+export OPERDIR=/oper/dados/ioper/tempo
 
 # Colors:
 export GREEN='\033[1;32m'  # Green

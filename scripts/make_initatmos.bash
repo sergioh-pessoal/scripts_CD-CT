@@ -28,13 +28,13 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 
 
 # Standart directories variables:---------------------------------------
-DIRHOMES=${DIR_SCRIPTS}/MONAN;   mkdir -p ${DIRHOMES}  
-DIRHOMED=${DIR_DADOS}/MONAN;     mkdir -p ${DIRHOMED}  
-SCRIPTS=${DIRHOMES}/scripts;     mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOMED}/datain;       mkdir -p ${DATAIN}
-DATAOUT=${DIRHOMED}/dataout;     mkdir -p ${DATAOUT}
-SOURCES=${DIRHOMES}/sources;     mkdir -p ${SOURCES}
-EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
+DIRHOMES=${DIR_SCRIPTS}/scripts_CD-CT; mkdir -p ${DIRHOMES}  
+DIRHOMED=${DIR_DADOS}/scripts_CD-CT;   mkdir -p ${DIRHOMED}  
+SCRIPTS=${DIRHOMES}/scripts;           mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOMED}/datain;             mkdir -p ${DATAIN}
+DATAOUT=${DIRHOMED}/dataout;           mkdir -p ${DATAOUT}
+SOURCES=${DIRHOMES}/sources;           mkdir -p ${SOURCES}
+EXECS=${DIRHOMED}/execs;               mkdir -p ${EXECS}
 #----------------------------------------------------------------------
 
 
@@ -49,15 +49,35 @@ FCST=${4};        #FCST=24
 # Local variables--------------------------------------
 start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}:00:00
 GEODATA=${DATAIN}/WPS_GEOG
-ncores=${INITATMOS_ncores}
+cores=${INITATMOS_ncores}
 #-------------------------------------------------------
-cp -f setenv.bash ${SCRIPTS}
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
 
 
-files_needed=("${DATAIN}/namelists/namelist.init_atmosphere.TEMPLATE" "${DATAIN}/namelists/streams.init_atmosphere.TEMPLATE" "${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores}" "${DATAIN}/fixed/x1.${RES}.static.nc" "${DATAOUT}/${YYYYMMDDHHi}/Pre/${EXP}:${start_date:0:13}" "${EXECS}/init_atmosphere_model")
-for file in "${files_needed[@]}"; do
-  if [[ ! -s "${file}" ]]; then
+if [ ! -s ${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores} ]
+then
+   if [ ! -s ${DATAIN}/fixed/x1.${RES}.graph.info ]
+   then
+      cd ${DATAIN}/fixed
+      echo -e "${GREEN}==>${NC} downloading meshes tgz files ... \n"
+      cd ${DATAIN}/fixed
+      wget https://www2.mmm.ucar.edu/projects/mpas/atmosphere_meshes/x1.${RES}.tar.gz
+      wget https://www2.mmm.ucar.edu/projects/mpas/atmosphere_meshes/x1.${RES}_static.tar.gz
+      tar -xzvf x1.${RES}.tar.gz
+      tar -xzvf x1.${RES}_static.tar.gz
+   fi
+   echo -e "${GREEN}==>${NC} Creating x1.${RES}.graph.info.part.${cores} ... \n"
+   cd ${DATAIN}/fixed
+   gpmetis -minconn -contig -niter=200 x1.${RES}.graph.info ${cores}
+   rm -fr x1.${RES}.tar.gz x1.${RES}_static.tar.gz
+fi
+
+
+files_needed=("${DATAIN}/namelists/namelist.init_atmosphere.TEMPLATE" "${DATAIN}/namelists/streams.init_atmosphere.TEMPLATE" "${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores}" "${DATAIN}/fixed/x1.${RES}.static.nc" "${DATAOUT}/${YYYYMMDDHHi}/Pre/${EXP}:${start_date:0:13}" "${EXECS}/init_atmosphere_model")
+for file in "${files_needed[@]}"
+do
+  if [ ! -s "${file}" ]
+  then
     echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	  
     echo -e  "${RED}==>${NC} [${0}] At least the file ${file} was not generated. \n"
     exit -1
@@ -68,13 +88,11 @@ done
 sed -e "s,#LABELI#,${start_date},g;s,#GEODAT#,${GEODATA},g;s,#RES#,${RES},g" \
 	 ${DATAIN}/namelists/namelist.init_atmosphere.TEMPLATE > ${SCRIPTS}/namelist.init_atmosphere
 
-
 sed -e "s,#RES#,${RES},g" \
     ${DATAIN}/namelists/streams.init_atmosphere.TEMPLATE > ${SCRIPTS}/streams.init_atmosphere
 
 
-#CR: verificar se existe o arq *part.${ncores}. Caso nao exista, criar um script que gere o arq necessario
-ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores} ${SCRIPTS}
+ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores} ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
 ln -sf ${DATAOUT}/${YYYYMMDDHHi}/Pre/${EXP}\:${start_date:0:13} ${SCRIPTS}
 ln -sf ${EXECS}/init_atmosphere_model ${SCRIPTS}
@@ -119,7 +137,7 @@ mv ${SCRIPTS}/x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Pre
 chmod a+x ${DATAIN}/fixed//x1.${RES}.init.nc 
 rm -f ${SCRIPTS}/${EXP}\:${start_date:0:13}
 rm -f ${SCRIPTS}/init_atmosphere_model
-rm -f ${SCRIPTS}/x1.${RES}.graph.info.part.${ncores}
+rm -f ${SCRIPTS}/x1.${RES}.graph.info.part.${cores}
 rm -f ${SCRIPTS}/x1.${RES}.static.nc
 rm -f ${SCRIPTS}/log.init_atmosphere.*.err
 

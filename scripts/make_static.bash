@@ -28,13 +28,13 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 
 
 # Standart directories variables:---------------------------------------
-DIRHOMES=${DIR_SCRIPTS}/MONAN;   mkdir -p ${DIRHOMES}  
-DIRHOMED=${DIR_DADOS}/MONAN;     mkdir -p ${DIRHOMED}  
-SCRIPTS=${DIRHOMES}/scripts;     mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOMED}/datain;       mkdir -p ${DATAIN}
-DATAOUT=${DIRHOMED}/dataout;     mkdir -p ${DATAOUT}
-SOURCES=${DIRHOMES}/sources;     mkdir -p ${SOURCES}
-EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
+DIRHOMES=${DIR_SCRIPTS}/scripts_CD-CT; mkdir -p ${DIRHOMES}  
+DIRHOMED=${DIR_DADOS}/scripts_CD-CT;   mkdir -p ${DIRHOMED}  
+SCRIPTS=${DIRHOMES}/scripts;           mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOMED}/datain;             mkdir -p ${DATAIN}
+DATAOUT=${DIRHOMED}/dataout;           mkdir -p ${DATAOUT}
+SOURCES=${DIRHOMES}/sources;           mkdir -p ${SOURCES}
+EXECS=${DIRHOMED}/execs;               mkdir -p ${EXECS}
 #----------------------------------------------------------------------
 
 
@@ -44,7 +44,6 @@ RES=${2};         #RES=1024002
 YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
 FCST=${4};        #FCST=24
 #-------------------------------------------------------
-cp -f setenv.bash ${SCRIPTS}
 
 
 # Local variables--------------------------------------
@@ -52,9 +51,31 @@ GEODATA=${DATAIN}/WPS_GEOG
 cores=${STATIC_ncores}
 #-------------------------------------------------------
 
+
+if [ ! -s ${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores} ]
+then
+   if [ ! -s ${DATAIN}/fixed/x1.${RES}.graph.info ]
+   then
+      cd ${DATAIN}/fixed
+      echo -e "${GREEN}==>${NC} downloading meshes tgz files ... \n"
+      wget https://www2.mmm.ucar.edu/projects/mpas/atmosphere_meshes/x1.${RES}.tar.gz
+      wget https://www2.mmm.ucar.edu/projects/mpas/atmosphere_meshes/x1.${RES}_static.tar.gz
+      tar -xzvf x1.${RES}.tar.gz
+      tar -xzvf x1.${RES}_static.tar.gz
+   fi
+   echo -e "${GREEN}==>${NC} Creating x1.${RES}.graph.info.part.${cores} ... \n"
+   cd ${DATAIN}/fixed
+   gpmetis -minconn -contig -niter=200 x1.${RES}.graph.info ${cores}
+   rm -fr x1.${RES}.tar.gz x1.${RES}_static.tar.gz
+fi
+
+
+
 files_needed=("${EXECS}/init_atmosphere_model" "${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores}" "${DATAIN}/fixed/x1.${RES}.grid.nc" "${DATAIN}/namelists/namelist.init_atmosphere.STATIC" "${DATAIN}/namelists/streams.init_atmosphere.STATIC")
-for file in "${files_needed[@]}"; do
-  if [[ ! -s "${file}" ]]; then
+for file in "${files_needed[@]}"
+do
+  if [ ! -s "${file}" ]
+  then
     echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	  
     echo -e  "${RED}==>${NC} [${0}] At least the file ${file} was not generated. \n"
     exit -1
@@ -143,5 +164,7 @@ then
 fi
 
 find ${SCRIPTS} -maxdepth 1 -type l -exec rm -f {} \;
-rm -f ${SCRIPTS}/log.init_atmosphere.*
+rm -f ${SCRIPTS}/log.init_atmosphere.* 
+rm -f ${SCRIPTS}/streams.init_atmosphere
+rm -f ${SCRIPTS}/namelist.init_atmosphere
 

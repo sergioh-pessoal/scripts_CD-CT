@@ -36,20 +36,19 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 
 
 # Standart directories variables:---------------------------------------
-DIRHOMES=${DIR_SCRIPTS}/MONAN;   rm -fr ${DIRHOMES}; mkdir -p ${DIRHOMES}  
-DIRHOMED=${DIR_DADOS}/MONAN;     rm -fr ${DIRHOMED}; mkdir -p ${DIRHOMED}  
-SCRIPTS=${DIRHOMES}/scripts;     mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOMED}/datain;       mkdir -p ${DATAIN}
-DATAOUT=${DIRHOMED}/dataout;     mkdir -p ${DATAOUT}
-SOURCES=${DIRHOMES}/sources;     mkdir -p ${SOURCES}
-EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
+DIRHOMES=${DIR_SCRIPTS}/scripts_CD-CT;  mkdir -p ${DIRHOMES}  
+DIRHOMED=${DIR_DADOS}/scripts_CD-CT;    mkdir -p ${DIRHOMED}  
+SCRIPTS=${DIRHOMES}/scripts;            mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOMED}/datain;              mkdir -p ${DATAIN}
+DATAOUT=${DIRHOMED}/dataout;            mkdir -p ${DATAOUT}
+SOURCES=${DIRHOMES}/sources;            mkdir -p ${SOURCES}
+EXECS=${DIRHOMED}/execs;                mkdir -p ${EXECS}
 #----------------------------------------------------------------------
 
 
 # Input variables:-----------------------------------------------------
 github_link=${1}; #github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
 #----------------------------------------------------------------------
-cp -f setenv.bash ${SCRIPTS}
 
 
 # Local variables:-----------------------------------------------------

@@ -33,6 +33,7 @@ then
    echo ""
    echo "24 hour forcast example:"
    echo "${0} GFS 1024002 2024010100 24"
+   echo "${0} GFS   40962 2024010100 48"
    echo ""
 
    exit
@@ -45,13 +46,13 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 
 
 # Standart directories variables:---------------------------------------
-DIRHOMES=${DIR_SCRIPTS}/MONAN;   mkdir -p ${DIRHOMES}  
-DIRHOMED=${DIR_DADOS}/MONAN;     mkdir -p ${DIRHOMED}  
-SCRIPTS=${DIRHOMES}/scripts;     mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOMED}/datain;       mkdir -p ${DATAIN}
-DATAOUT=${DIRHOMED}/dataout;     mkdir -p ${DATAOUT}
-SOURCES=${DIRHOMES}/sources;     mkdir -p ${SOURCES}
-EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
+DIRHOMES=${DIR_SCRIPTS}/scripts_CD-CT; mkdir -p ${DIRHOMES}  
+DIRHOMED=${DIR_DADOS}/scripts_CD-CT;   mkdir -p ${DIRHOMED}  
+SCRIPTS=${DIRHOMES}/scripts;           mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOMED}/datain;             mkdir -p ${DATAIN}
+DATAOUT=${DIRHOMED}/dataout;           mkdir -p ${DATAOUT}
+SOURCES=${DIRHOMES}/sources;           mkdir -p ${SOURCES}
+EXECS=${DIRHOMED}/execs;               mkdir -p ${EXECS}
 #----------------------------------------------------------------------
 
 
@@ -61,7 +62,6 @@ RES=${2};         #RES=1024002
 YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
 FCST=${4};        #FCST=24
 #-------------------------------------------------------
-cp -f setenv.bash ${SCRIPTS}
 
 
 # Local variables--------------------------------------
@@ -71,19 +71,18 @@ hhi=${YYYYMMDDHHi:8:2}
 yyyymmddhhf=$(date +"%Y%m%d%H" -d "${yyyymmddi} ${hhi}:00 ${FCST} hours" )
 final_date=${yyyymmddhhf:0:4}-${yyyymmddhhf:4:2}-${yyyymmddhhf:6:2}_${yyyymmddhhf:8:2}.00.00
 #-------------------------------------------------------
-# namelists files marked with TEMPLATE can be found in datain/namelists
-# those files are copied from versined main diretory scripts_CD-CT/namelists
-mkdir -p ${DATAIN}/namelists
-cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
 
 
 # Untar the fixed files:
 # x1.${RES}.graph.info.part.<Ncores> files can be found in datain/fixed
-# *.TBL files can be found in datain/fixed
-# x1.${RES}.grid.nc can be found in datain/fixed
-#~12m30s
-echo -e  "${GREEN}==>${NC} Copying and decompressing input data... \n"
-time tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOMED}
+# *.TBL files also can be found in datain/fixed
+# x1.${RES}.grid.nc also can be found in datain/fixed
+
+if [ ! -d "${DATAIN}/fixed" ]
+then
+   echo -e  "${GREEN}==>${NC} Copying and decompressing input data... \n"
+   time tar -xzvf ${DIRDADOS}/MONAN_datain.tgz -C ${DIRHOMED}
+fi
 
 
 # Creating the x1.${RES}.static.nc file once, if does not exist yet:---------------

@@ -16,6 +16,7 @@ then
    echo ""
    echo "24 hour forcast example:"
    echo "${0} GFS 1024002 2024010100 24"
+   echo "${0} GFS   40962 2024010100 48"
    echo ""
 
    exit
@@ -28,13 +29,13 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 
 
 # Standart directories variables:---------------------------------------
-DIRHOMES=${DIR_SCRIPTS}/MONAN;   mkdir -p ${DIRHOMES}  
-DIRHOMED=${DIR_DADOS}/MONAN;     mkdir -p ${DIRHOMED}  
-SCRIPTS=${DIRHOMES}/scripts;     mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOMED}/datain;       mkdir -p ${DATAIN}
-DATAOUT=${DIRHOMED}/dataout;     mkdir -p ${DATAOUT}
-SOURCES=${DIRHOMES}/sources;     mkdir -p ${SOURCES}
-EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
+DIRHOMES=${DIR_SCRIPTS}/scripts_CD-CT;  mkdir -p ${DIRHOMES}  
+DIRHOMED=${DIR_DADOS}/scripts_CD-CT;    mkdir -p ${DIRHOMED}  
+SCRIPTS=${DIRHOMES}/scripts;            mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOMED}/datain;              mkdir -p ${DATAIN}
+DATAOUT=${DIRHOMED}/dataout;            mkdir -p ${DATAOUT}
+SOURCES=${DIRHOMES}/sources;            mkdir -p ${SOURCES}
+EXECS=${DIRHOMED}/execs;                mkdir -p ${EXECS}
 #----------------------------------------------------------------------
 
 
@@ -51,7 +52,6 @@ start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHH
 OPERDIREXP=${OPERDIR}/${EXP}
 BNDDIR=${OPERDIREXP}/0p25/brutos/${YYYYMMDDHHi:0:4}/${YYYYMMDDHHi:4:2}/${YYYYMMDDHHi:6:2}/${YYYYMMDDHHi:8:2}
 #-------------------------------------------------------
-cp -f setenv.bash ${SCRIPTS}
 mkdir -p ${DATAIN}/${YYYYMMDDHHi}
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
 
@@ -68,8 +68,10 @@ then
 fi
 
 files_needed=("${DATAIN}/fixed/x1.${RES}.static.nc" "${DATAIN}/fixed/Vtable.${EXP}" "${EXECS}/ungrib.exe" "${BNDDIR}/gfs.t00z.pgrb2.0p25.f000.${YYYYMMDDHHi}.grib2")
-for file in "${files_needed[@]}"; do
-  if [[ ! -s "${file}" ]]; then
+for file in "${files_needed[@]}"
+do
+  if [ ! -s "${file}" ]
+  then
     echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	  
     echo -e  "${RED}==>${NC} [${0}] At least the file ${file} was not generated. \n"
     exit -1
@@ -79,7 +81,6 @@ done
 ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/Vtable.${EXP} ${SCRIPTS}/Vtable
 ln -sf ${EXECS}/ungrib.exe ${SCRIPTS}
-cp -f ./link_grib.csh ${SCRIPTS}
 cp -rf ${BNDDIR}/gfs.t00z.pgrb2.0p25.f000.${YYYYMMDDHHi}.grib2 ${DATAIN}/${YYYYMMDDHHi}
 
 
@@ -145,7 +146,7 @@ fi
 
    rm -f ${SCRIPTS}/ungrib.exe 
    rm -f ${SCRIPTS}/Vtable 
-   rm -f ${SCRIPTS}/x1.1024002.static.nc
+   rm -f ${SCRIPTS}/x1.${RES}.static.nc
    rm -f ${SCRIPTS}/GRIBFILE.AAA
 
 echo "End of degrib Job"
@@ -161,7 +162,8 @@ sbatch --wait ${SCRIPTS}/degrib.bash
 
 
 files_ungrib=("${EXP}:${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}")
-for file in "${files_ungrib[@]}"; do
+for file in "${files_ungrib[@]}"
+do
   if [ ! -s ${DATAOUT}/${YYYYMMDDHHi}/Pre/${file} ] 
   then
     echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	  

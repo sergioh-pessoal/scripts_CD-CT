@@ -30,6 +30,7 @@ then
    echo ""
    echo "24 hour forcast example:"
    echo "${0} GFS 1024002 2024010100 24"
+   echo "${0} GFS   40962 2024010100 48"
    echo ""
 
    exit
@@ -42,13 +43,13 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 
 
 # Standart directories variables:---------------------------------------
-DIRHOMES=${DIR_SCRIPTS}/MONAN;   mkdir -p ${DIRHOMES}  
-DIRHOMED=${DIR_DADOS}/MONAN;     mkdir -p ${DIRHOMED}  
-SCRIPTS=${DIRHOMES}/scripts;     mkdir -p ${SCRIPTS}
-DATAIN=${DIRHOMED}/datain;       mkdir -p ${DATAIN}
-DATAOUT=${DIRHOMED}/dataout;     mkdir -p ${DATAOUT}
-SOURCES=${DIRHOMES}/sources;     mkdir -p ${SOURCES}
-EXECS=${DIRHOMED}/execs;         mkdir -p ${EXECS}
+DIRHOMES=${DIR_SCRIPTS}/scripts_CD-CT; mkdir -p ${DIRHOMES}  
+DIRHOMED=${DIR_DADOS}/scripts_CD-CT;   mkdir -p ${DIRHOMED}  
+SCRIPTS=${DIRHOMES}/scripts;           mkdir -p ${SCRIPTS}
+DATAIN=${DIRHOMED}/datain;             mkdir -p ${DATAIN}
+DATAOUT=${DIRHOMED}/dataout;           mkdir -p ${DATAOUT}
+SOURCES=${DIRHOMES}/sources;           mkdir -p ${SOURCES}
+EXECS=${DIRHOMED}/execs;               mkdir -p ${EXECS}
 #----------------------------------------------------------------------
 
 
@@ -58,17 +59,15 @@ RES=${2};         #RES=1024002
 YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
 FCST=${4};        #FCST=6
 #-------------------------------------------------------
-cp -f setenv.bash ${SCRIPTS}
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
 
 
 # Local variables--------------------------------------
 start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}:00:00
-ncores=${MODEL_ncores}
+cores=${MODEL_ncores}
 hhi=${YYYYMMDDHHi:8:2}
 #-------------------------------------------------------
-mkdir -p ${DATAIN}/namelists
-cp -f $(pwd)/../namelists/* ${DATAIN}/namelists
+
 
 # Calculating final forecast dates in model namelist format: DD_HH:MM:SS 
 # using: start_date(yyyymmdd) + FCST(hh) :
@@ -77,22 +76,40 @@ inh=$(printf "%02.0f\n" $(echo "((${FCST}/24)-${ind})*24" | bc -l))
 DD_HHMMSS_forecast=$(echo "${ind}_${inh}:00:00")
 
 
-if [ ! -s ${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores} ]
+if [ ! -s ${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores} ]
 then
-   echo -e "${RED}==>${NC} File x1.${RES}.graph.info.part.${ncores} does not exist in ${DATAIN}/fixed.\n"
-   echo -e "${RED}==>${NC} Need to be created: module load metis/5.1.0, and follow the instructions:\n"
-   echo -e "${RED}==>${NC} ...maybe create a script to do that in the future... \n"
-   exit
+   if [ ! -s ${DATAIN}/fixed/x1.${RES}.graph.info ]
+   then
+      cd ${DATAIN}/fixed
+      echo -e "${GREEN}==>${NC} downloading meshes tgz files ... \n"
+      wget https://www2.mmm.ucar.edu/projects/mpas/atmosphere_meshes/x1.${RES}.tar.gz
+      wget https://www2.mmm.ucar.edu/projects/mpas/atmosphere_meshes/x1.${RES}_static.tar.gz
+      tar -xzvf x1.${RES}.tar.gz
+      tar -xzvf x1.${RES}_static.tar.gz
+   fi
+   echo -e "${GREEN}==>${NC} Creating x1.${RES}.graph.info.part.${cores} ... \n"
+   cd ${DATAIN}/fixed
+   gpmetis -minconn -contig -niter=200 x1.${RES}.graph.info ${cores}
+   rm -fr x1.${RES}.tar.gz x1.${RES}_static.tar.gz
 fi
 
+files_needed=("${EXECS}/atmosphere_model" "${DATAIN}/fixed/x1.${RES}.static.nc" "${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores}" "${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc" "${DATAIN}/fixed/Vtable.GFS" "${DATAIN}/fixed/Vtable.ERA-interim.pl")
+for file in "${files_needed[@]}"
+do
+  if [ ! -s "${file}" ]
+  then
+    echo -e  "\n${RED}==>${NC} ***** ATTENTION *****\n"	  
+    echo -e  "${RED}==>${NC} [${0}] At least the file ${file} was not generated. \n"
+    exit -1
+  fi
+done
 
-#CR: verify if input files exist before submit the model:
 ln -sf ${EXECS}/atmosphere_model ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/*TBL ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/*DBL ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/*DATA ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
-ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${ncores} ${SCRIPTS}
+ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores} ${SCRIPTS}
 ln -sf ${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/Vtable.GFS ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/Vtable.ERA-interim.pl ${SCRIPTS}
@@ -100,12 +117,11 @@ ln -sf ${DATAIN}/fixed/Vtable.ERA-interim.pl ${SCRIPTS}
 
 if [ ${EXP} = "GFS" ]
 then
-   sed -e "s,#LABELI#,${start_date},g" \
-         ${DATAIN}/namelists/namelist.atmosphere.TEMPLATE > ${SCRIPTS}/namelist.atmosphere.1
-   sed -e "s,#FCSTS#,${DD_HHMMSS_forecast},g" \
-         ${SCRIPTS}/namelist.atmosphere.1 > ${SCRIPTS}/namelist.atmosphere
-   rm -f ${SCRIPTS}/namelist.atmosphere.1
-   cp -f ${DATAIN}/namelists/streams.atmosphere.TEMPLATE ${SCRIPTS}/streams.atmosphere
+   sed -e "s,#LABELI#,${start_date},g;s,#FCSTS#,${DD_HHMMSS_forecast},g;s,#RES#,${RES},g" \
+         ${DATAIN}/namelists/namelist.atmosphere.TEMPLATE > ${SCRIPTS}/namelist.atmosphere
+   
+   sed -e "s,#RES#,${RES},g" \
+   ${DATAIN}/namelists/streams.atmosphere.TEMPLATE > ${SCRIPTS}/streams.atmosphere
 fi
 cp -f ${DATAIN}/namelists/stream_list.atmosphere.* ${SCRIPTS}
 
@@ -157,7 +173,7 @@ rm -f ${SCRIPTS}/*TBL
 rm -f ${SCRIPTS}/*.DBL
 rm -f ${SCRIPTS}/*DATA
 rm -f ${SCRIPTS}/x1.${RES}.static.nc
-rm -f ${SCRIPTS}/x1.${RES}.graph.info.part.${ncores}
+rm -f ${SCRIPTS}/x1.${RES}.graph.info.part.${cores}
 rm -f ${SCRIPTS}/Vtable.GFS
 rm -f ${SCRIPTS}/Vtable.ERA-interim.pl
 rm -f ${SCRIPTS}/x1.${RES}.init.nc
