@@ -20,12 +20,11 @@ v0.1.0 - Initial revision
 Cloning this repo: `git clone https://github.com/monanadmin/scripts_CD-CT.git`
 you will get this directories:
 ~~~
-namelists
+datain/namelists
 scripts
-olds
 ~~~
-- The `olds` directory should be ignored for while.
-- The `namelists` directory contains all versioned namelists needded for run and compile all phases of model;
+
+- The `datain/namelists` directory contains all versioned namelists needded for run and compile all phases of model;
 - The `scripts` directory is the most important folder that contains all the scripts that you will need to install, compile, run, and produce produtcs of the A-MONAN model.
 
 
@@ -43,7 +42,7 @@ You will need to execute only 6 steps scripts, so you can run the Atmospheric MO
 
 - This first step will create a standart diretories structures for work:
 ~~~
-MONAN/
+scripts_CD-CT/
        scripts
        sources
        execs
