@@ -18,16 +18,16 @@
 #
 #-----------------------------------------------------------------------------#
 
-if [ $# -ne 1 ]
-then
-   echo ""
-   echo "Instructions: execute the command below"
-   echo ""
-   echo "${0} [G]"
-   echo ""
-   echo "G   :: GitHub link for your personal fork, eg: https://github.com/MYUSER/MONAN-Model.git"
-   exit
-fi
+#if [ $# -ne 1 ]
+#then
+#   echo ""
+#   echo "Instructions: execute the command below"
+#   echo ""
+#   echo "${0} [G]"
+#   echo ""
+#   echo "G   :: GitHub link for your personal fork, eg: https://github.com/MYUSER/MONAN-Model.git"
+#   exit
+#fi
 
 # Set environment variables exports:
 echo ""
@@ -47,12 +47,12 @@ EXECS=${DIRHOMED}/execs;                mkdir -p ${EXECS}
 
 
 # Input variables:-----------------------------------------------------
-github_link=${1}; #github_link=https://github.com/carlosrenatosouza2/MONAN-Model_CR.git
+github_link=https://github.com/monanadmin/MONAN-Model.git
 #----------------------------------------------------------------------
 
 
 # Local variables:-----------------------------------------------------
-vlabel="v0.1.0"
+vlabel="0.4.0"
 MONANDIR=${SOURCES}/MONAN-Model_${vlabel}
 CONVERT_MPAS_DIR=${SOURCES}/convert_mpas
 branch_name="develop"
@@ -76,8 +76,9 @@ fi
 
 cd ${MONANDIR}
 if git checkout "${branch_name}" 2>/dev/null; then
+    git checkout tags/${vlabel} -b branch_v${vlabel}
     git pull
-    echo -e "${GREEN}==>${NC} Successfully checked out and updated branch: ${BLUE}${branch_name}"
+    echo -e "${GREEN}==>${NC} Successfully checked out and updated branch: ${BLUE}${branch_name} --> branch_v${vlabel}"
 else
     echo -e "${RED}==>${NC} Failed to check out branch: ${BLUE}${branch_name}"
     echo -e "${RED}==>${NC} Please check if you have this branch. Exiting ..."

@@ -66,6 +66,7 @@ mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
 start_date=${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}_${YYYYMMDDHHi:8:2}:00:00
 cores=${MODEL_ncores}
 hhi=${YYYYMMDDHHi:8:2}
+NLEV=55
 #-------------------------------------------------------
 
 
@@ -120,10 +121,11 @@ then
    sed -e "s,#LABELI#,${start_date},g;s,#FCSTS#,${DD_HHMMSS_forecast},g;s,#RES#,${RES},g" \
          ${DATAIN}/namelists/namelist.atmosphere.TEMPLATE > ${SCRIPTS}/namelist.atmosphere
    
-   sed -e "s,#RES#,${RES},g" \
+   sed -e "s,#RES#,${RES},g;s,#CIORIG#,${EXP},g;s,#LABELI#,${YYYYMMDDHHi},g;s,#NLEV#,${NLEV},g" \
    ${DATAIN}/namelists/streams.atmosphere.TEMPLATE > ${SCRIPTS}/streams.atmosphere
 fi
 cp -f ${DATAIN}/namelists/stream_list.atmosphere.* ${SCRIPTS}
+
 
 
 rm -f ${SCRIPTS}/model.bash 
@@ -160,8 +162,8 @@ date
 # move dataout, clean up and remove files/links
 #
 
-mv diag* ${DATAOUT}/${YYYYMMDDHHi}/Model
-mv histor* ${DATAOUT}/${YYYYMMDDHHi}/Model
+mv MONAN_DIAG_* ${DATAOUT}/${YYYYMMDDHHi}/Model
+mv MONAN_HIST_* ${DATAOUT}/${YYYYMMDDHHi}/Model
 
 mv log.atmosphere.*.out ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
 mv log.atmosphere.*.err ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
