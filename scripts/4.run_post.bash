@@ -140,3 +140,4 @@ EOF0
   echo ""
 done
 
+#TODO: Concatanate all output files in one, or make a ctl template for grads open all them!

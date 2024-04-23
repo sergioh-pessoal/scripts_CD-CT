@@ -18,18 +18,18 @@
 #
 #-----------------------------------------------------------------------------#
 
-#if [ $# -lt 1 ]
-#then
-#   echo ""
-#   echo "Instructions: execute the command below"
-#   echo ""
-#   echo "${0} [G] [B]"
-#   echo ""
-#   echo "G   :: GitHub link for your personal fork, eg: https://github.com/MYUSER/MONAN-Model.git"
-#   echo "B   :: Tag or branch name of your personal fork. (will be used 'develop' if not informed)" 
-
-#   exit
-#fi
+if [ $# -lt 1 ]
+then
+   echo ""
+   echo "Instructions: execute the command below"
+   echo ""
+   echo "${0} [G] [B]"
+   echo ""
+   echo "G   :: GitHub link for your personal fork, eg: https://github.com/MYUSER/MONAN-Model.git"
+   echo "B   :: Tag or branch name of your personal fork. (will be used 'develop' if not informed)" 
+   echo ""
+   exit
+fi
 
 # Set environment variables exports:
 echo ""
@@ -49,13 +49,14 @@ EXECS=${DIRHOMED}/execs;                mkdir -p ${EXECS}
 
 
 # Input variables:-----------------------------------------------------
-github_link=https://github.com/monanadmin/MONAN-Model.git
-if [ ! -z "$2" ]; then
-    tag_or_branch_name="$2"
+github_link=${1};   #github_link=https://github.com/monanadmin/MONAN-Model.git
+if [ ! -z ${2} ]
+then
+    tag_or_branch_name=${2}
 else
     tag_or_branch_name="develop"
 fi
-echo "Tag or branch name in use: $tag_or_branch_name"
+echo "Tag or branch name in use: ${tag_or_branch_name}"
 #----------------------------------------------------------------------
 
 
@@ -91,7 +92,7 @@ else
     echo -e "${RED}==>${NC} Please check if you have this branch. Exiting ..."
     exit -1
 fi
-
+git log -1 --name-only
 
 
 

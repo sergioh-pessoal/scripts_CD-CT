@@ -83,6 +83,7 @@ git branch | head -1
 # *.TBL files also can be found in datain/fixed
 # x1.${RES}.grid.nc also can be found in datain/fixed
 
+# TODO: put the WPS_GEO directory in a public place available for everyone
 if [ ! -d "${DATAIN}/fixed" ]
 then
    echo -e  "${GREEN}==>${NC} Copying and decompressing input data... \n"

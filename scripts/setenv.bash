@@ -31,8 +31,6 @@ export DIR_SCRIPTS=$(pwd)/../..
 export DIR_DADOS=$(pwd)/../..
 
 
-
-
 # Submiting variables:
 
 # PRE-Static phase:
