@@ -94,7 +94,7 @@ then
    rm -fr x1.${RES}.tar.gz x1.${RES}_static.tar.gz
 fi
 
-files_needed=("${EXECS}/atmosphere_model" "${DATAIN}/fixed/x1.${RES}.static.nc" "${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores}" "${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc" "${DATAIN}/fixed/Vtable.GFS" "${DATAIN}/fixed/Vtable.ERA-interim.pl")
+files_needed=("${EXECS}/atmosphere_model" "${DATAIN}/fixed/x1.${RES}.static.nc" "${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores}" "${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc" "${DATAIN}/fixed/Vtable.GFS")
 for file in "${files_needed[@]}"
 do
   if [ ! -s "${file}" ]
@@ -113,7 +113,6 @@ ln -sf ${DATAIN}/fixed/x1.${RES}.static.nc ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores} ${SCRIPTS}
 ln -sf ${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/Vtable.GFS ${SCRIPTS}
-ln -sf ${DATAIN}/fixed/Vtable.ERA-interim.pl ${SCRIPTS}
 
 
 if [ ${EXP} = "GFS" ]
@@ -177,7 +176,6 @@ rm -f ${SCRIPTS}/*DATA
 rm -f ${SCRIPTS}/x1.${RES}.static.nc
 rm -f ${SCRIPTS}/x1.${RES}.graph.info.part.${cores}
 rm -f ${SCRIPTS}/Vtable.GFS
-rm -f ${SCRIPTS}/Vtable.ERA-interim.pl
 rm -f ${SCRIPTS}/x1.${RES}.init.nc
 
 

@@ -18,14 +18,16 @@
 #
 #-----------------------------------------------------------------------------#
 
-#if [ $# -ne 1 ]
+#if [ $# -lt 1 ]
 #then
 #   echo ""
 #   echo "Instructions: execute the command below"
 #   echo ""
-#   echo "${0} [G]"
+#   echo "${0} [G] [B]"
 #   echo ""
 #   echo "G   :: GitHub link for your personal fork, eg: https://github.com/MYUSER/MONAN-Model.git"
+#   echo "B   :: Tag or branch name of your personal fork. (will be used 'develop' if not informed)" 
+
 #   exit
 #fi
 
@@ -48,14 +50,19 @@ EXECS=${DIRHOMED}/execs;                mkdir -p ${EXECS}
 
 # Input variables:-----------------------------------------------------
 github_link=https://github.com/monanadmin/MONAN-Model.git
+if [ ! -z "$2" ]; then
+    tag_or_branch_name="$2"
+else
+    tag_or_branch_name="develop"
+fi
+echo "Tag or branch name in use: $tag_or_branch_name"
 #----------------------------------------------------------------------
 
 
 # Local variables:-----------------------------------------------------
-vlabel="0.4.0"
+vlabel=${tag_or_branch_name}
 MONANDIR=${SOURCES}/MONAN-Model_${vlabel}
 CONVERT_MPAS_DIR=${SOURCES}/convert_mpas
-branch_name="develop"
 #----------------------------------------------------------------------
 
 
@@ -75,15 +82,17 @@ else
 fi
 
 cd ${MONANDIR}
-if git checkout "${branch_name}" 2>/dev/null; then
+if git checkout "${tag_or_branch_name}" 2>/dev/null; then
     git checkout tags/${vlabel} -b branch_v${vlabel}
     git pull
-    echo -e "${GREEN}==>${NC} Successfully checked out and updated branch: ${BLUE}${branch_name} --> branch_v${vlabel}"
+    echo -e "${GREEN}==>${NC} Successfully checked out and updated branch: ${BLUE}${tag_or_branch_name} --> branch_v${vlabel}"
 else
-    echo -e "${RED}==>${NC} Failed to check out branch: ${BLUE}${branch_name}"
+    echo -e "${RED}==>${NC} Failed to check out branch: ${BLUE}${tag_or_branch_name}"
     echo -e "${RED}==>${NC} Please check if you have this branch. Exiting ..."
     exit -1
 fi
+
+
 
 
 
@@ -123,22 +132,27 @@ cat << EOF > make-all.sh
 #    SHAREDLIB=true - generate position-independent code suitable for use in a shared library. Default is false.
 
 
+rm -f ${MONANDIR}/stream_list.*
+
+DATE_TIME_NOW=\$(date +"%Y%m%d%H%M%S")
+
 export NETCDF=${NETCDFDIR}
 export PNETCDF=${PNETCDFDIR}
 # PIO is not necessary for version 8.* If PIO is empty, MPAS Will use SMIOL
 export PIO=
 
-
+MAKE_OUT_FILE="make_\${DATE_TIME_NOW}_.output.atmosphere"
 make clean CORE=atmosphere
-make -j 8 gfortran CORE=atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee make-all.output
+make -j 8 gfortran CORE=atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee ${MAKE_OUT_FILE}
 
 #CR: TODO: put verify here if executable was created ok
 mv ${MONANDIR}/atmosphere_model ${EXECS}
 mv ${MONANDIR}/build_tables ${EXECS}
 make clean CORE=atmosphere
 
+MAKE_OUT_FILE="make_\${DATE_TIME_NOW}_.output.init_atmosphere"
 make clean CORE=init_atmosphere
-make -j 8 gfortran CORE=init_atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee make-all.output
+make -j 8 gfortran CORE=init_atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee ${MAKE_OUT_FILE}
 
 mv ${MONANDIR}/init_atmosphere_model ${EXECS}
 make clean CORE=init_atmosphere
@@ -190,15 +204,18 @@ cat << EOF > make.sh
 #    PRECISION=single - builds with default single-precision real kind. Default is to use double-precision.
 #    SHAREDLIB=true - generate position-independent code suitable for use in a shared library. Default is false.
 
+rm -f ${MONANDIR}/stream_list.*
+DATE_TIME_NOW=\$(date +"%Y%m%d%H%M%S")
+
 
 export NETCDF=${NETCDFDIR}
 export PNETCDF=${PNETCDFDIR}
 # PIO is not necessary for version 8.* If PIO is empty, MPAS Will use SMIOL
 export PIO=
 
-
+MAKE_OUT_FILE="make_\${DATE_TIME_NOW}_.output.atmosphere"
 make clean CORE=atmosphere
-make -j 8 gfortran CORE=atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee make-all.output
+make -j 8 gfortran CORE=atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee ${MAKE_OUT_FILE}
 
 #CR: TODO: put verify here if executable was created ok
 mv ${MONANDIR}/atmosphere_model ${EXECS}

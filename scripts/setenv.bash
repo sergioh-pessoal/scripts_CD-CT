@@ -27,9 +27,8 @@ module list
 
 # MONAN-suite install root directories:
 # Put your directories:
-export DIRWORK=$(pwd)   # old one will not be used any more
-export DIR_SCRIPTS=/mnt/beegfs/carlos.souza/repo_Monan
-export DIR_DADOS=/mnt/beegfs/carlos.souza/repo_Monan
+export DIR_SCRIPTS=$(pwd)/../..
+export DIR_DADOS=$(pwd)/../..
 
 
 

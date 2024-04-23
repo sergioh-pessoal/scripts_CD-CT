@@ -73,6 +73,11 @@ final_date=${yyyymmddhhf:0:4}-${yyyymmddhhf:4:2}-${yyyymmddhhf:6:2}_${yyyymmddhh
 #-------------------------------------------------------
 
 
+echo -e  "${GREEN}==>${NC} Scripts_CD-CT last commit: \n"
+git log -1 --name-only
+git branch | head -1
+
+
 # Untar the fixed files:
 # x1.${RES}.graph.info.part.<Ncores> files can be found in datain/fixed
 # *.TBL files also can be found in datain/fixed

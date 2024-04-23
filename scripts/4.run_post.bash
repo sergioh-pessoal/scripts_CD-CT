@@ -58,7 +58,6 @@ EXP=${1};         #EXP=GFS
 RES=${2};         #RES=1024002
 YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
 FCST=${4};        #FCST=6
-NLEV=55
 #-------------------------------------------------------
 
 
@@ -69,7 +68,7 @@ START_HH="${YYYYMMDDHHi:8:2}"
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Post/logs
 
 
-iles_needed=("${DATAIN}/namelists/include_fields.diag" "${EXECS}/convert_mpas" "${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc")
+files_needed=("${DATAIN}/namelists/include_fields.diag" "${EXECS}/convert_mpas" "${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc")
 for file in "${files_needed[@]}"
 do
   if [ ! -s "${file}" ]
@@ -125,8 +124,8 @@ rm -f latlon.nc
 date
 time ./\${executable} x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Model/${outputfile}
 date
+cdo settunits,hours -settaxis,${YYYYMMDDHHi:0:8},${YYYYMMDDHHi:9:2}:00,1hour latlon.nc ${DATAOUT}/${YYYYMMDDHHi}/Post/${post_name}
 
-mv latlon.nc ${DATAOUT}/${YYYYMMDDHHi}/Post/${post_name}
 rm -fr ${SCRIPTS}/dir.${outputfile}.dir
 
 EOF0
