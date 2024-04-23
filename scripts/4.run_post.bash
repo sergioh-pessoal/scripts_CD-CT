@@ -58,6 +58,7 @@ EXP=${1};         #EXP=GFS
 RES=${2};         #RES=1024002
 YYYYMMDDHHi=${3}; #YYYYMMDDHHi=2024012000
 FCST=${4};        #FCST=6
+NLEV=55
 #-------------------------------------------------------
 
 
@@ -81,13 +82,22 @@ done
 
 
 
-cp ${DATAIN}/namelists/include_fields.diag ${SCRIPTS}/include_fields
-ln -sf ${EXECS}/convert_mpas ${SCRIPTS}
-ln -sf ${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc ${SCRIPTS}
 
+cd  ${DATAOUT}/${YYYYMMDDHHi}/Model
+for outputfile in MONAN_DIAG_*nc
+do
+  echo ${outputfile}
+  cd ${SCRIPTS}
+  mkdir -p ${SCRIPTS}/dir.${outputfile}.dir
+  cd ${SCRIPTS}/dir.${outputfile}.dir
 
-rm -f ${SCRIPTS}/post.bash 
-cat << EOF0 > ${SCRIPTS}/post.bash 
+  ln -sf ${DATAIN}/namelists/include_fields.diag  ${SCRIPTS}/dir.${outputfile}.dir/include_fields
+  ln -sf ${EXECS}/convert_mpas ${SCRIPTS}/dir.${outputfile}.dir
+  ln -sf ${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc ${SCRIPTS}/dir.${outputfile}.dir
+  post_name=$(echo "${outputfile}" | sed -e "s,_MOD_,_POS_,g")
+  
+  rm -f ${SCRIPTS}/dir.${outputfile}.dir/post.bash 
+cat << EOF0 > ${SCRIPTS}/dir.${outputfile}.dir/post.bash 
 #!/bin/bash
 #SBATCH --job-name=${POST_jobname}
 #SBATCH --nodes=${POST_nnodes}
@@ -107,31 +117,27 @@ ulimit -c unlimited
 ulimit -v unlimited
 ulimit -s unlimited
 
-. $(pwd)/setenv.bash
+. ${SCRIPTS}/setenv.bash
 
-cd ${SCRIPTS}
+cd ${SCRIPTS}/dir.${outputfile}.dir
 
 rm -f latlon.nc
 date
-time ./\${executable} x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Model/diag*nc
+time ./\${executable} x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Model/${outputfile}
 date
 
-rm -f surface.nc
-date
-time cdo settunits,hours -settaxis,${START_DATE_YYYYMMDD},${START_HH}:00,1hour latlon.nc surface.nc
-date
-rm -f latlon.nc
-
-rm -f x1.${RES}.init.nc
-rm -f \${executable}
-mv  include_fields ${DATAOUT}/${YYYYMMDDHHi}/Post
-mv surface.nc ${DATAOUT}/${YYYYMMDDHHi}/Post
+mv latlon.nc ${DATAOUT}/${YYYYMMDDHHi}/Post/${post_name}
+rm -fr ${SCRIPTS}/dir.${outputfile}.dir
 
 EOF0
-chmod a+x ${SCRIPTS}/post.bash
+  chmod a+x ${SCRIPTS}/dir.${outputfile}.dir/post.bash
 
-echo -e  "${GREEN}==>${NC} Submitting MONAN atmosphere model Post-processing and waiting for finish before exit... \n"
-echo -e  "${GREEN}==>${NC} Logs being generated at ${DATAOUT}/logs... \n"
-echo -e  "sbatch ${SCRIPTS}/post.bash"
-sbatch --wait ${SCRIPTS}/post.bash
+  #echo -e  "${GREEN}==>${NC} Submitting MONAN atmosphere model Post-processing and waiting for finish before exit... \n"
+  #echo -e  "${GREEN}==>${NC} Logs being generated at ${DATAOUT}/logs... \n"
+  echo -e  "sbatch ${SCRIPTS}/dir.${outputfile}.dir/post.bash"
+  echo ""
+  sbatch ${SCRIPTS}/dir.${outputfile}.dir/post.bash
+
+  echo ""
+done
 
