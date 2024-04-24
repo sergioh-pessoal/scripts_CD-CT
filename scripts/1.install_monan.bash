@@ -94,7 +94,9 @@ else
 fi
 git log -1 --name-only
 
-
+rm -rf $MONANDIR/default_inputs/ 
+rm -f  $MONANDIR/stream_list.* $MONANDIR/streams.* $MONANDIR/namelist.* 
+rm -f  $MONANDIR/make*.output.atmosphere $MONANDIR/make*.output.init_atmosphere $MONANDIR/make.sh $MONANDIR/make-all.sh
 
 
 #CR: TODO: maybe later move this make script to main scripts directory.
@@ -134,7 +136,6 @@ cat << EOF > make-all.sh
 
 
 rm -f ${MONANDIR}/stream_list.*
-
 DATE_TIME_NOW=\$(date +"%Y%m%d%H%M%S")
 
 export NETCDF=${NETCDFDIR}
@@ -144,7 +145,7 @@ export PIO=
 
 MAKE_OUT_FILE="make_\${DATE_TIME_NOW}_.output.atmosphere"
 make clean CORE=atmosphere
-make -j 8 gfortran CORE=atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee ${MAKE_OUT_FILE}
+make -j 8 gfortran CORE=atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee \${MAKE_OUT_FILE}
 
 #CR: TODO: put verify here if executable was created ok
 mv ${MONANDIR}/atmosphere_model ${EXECS}
@@ -153,7 +154,7 @@ make clean CORE=atmosphere
 
 MAKE_OUT_FILE="make_\${DATE_TIME_NOW}_.output.init_atmosphere"
 make clean CORE=init_atmosphere
-make -j 8 gfortran CORE=init_atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee ${MAKE_OUT_FILE}
+make -j 8 gfortran CORE=init_atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee \${MAKE_OUT_FILE}
 
 mv ${MONANDIR}/init_atmosphere_model ${EXECS}
 make clean CORE=init_atmosphere
@@ -216,7 +217,7 @@ export PIO=
 
 MAKE_OUT_FILE="make_\${DATE_TIME_NOW}_.output.atmosphere"
 make clean CORE=atmosphere
-make -j 8 gfortran CORE=atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee ${MAKE_OUT_FILE}
+make -j 8 gfortran CORE=atmosphere OPENMP=true USE_PIO2=false PRECISION=single 2>&1 | tee \${MAKE_OUT_FILE}
 
 #CR: TODO: put verify here if executable was created ok
 mv ${MONANDIR}/atmosphere_model ${EXECS}
