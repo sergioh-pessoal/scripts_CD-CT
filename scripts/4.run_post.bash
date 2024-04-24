@@ -140,4 +140,4 @@ EOF0
   echo ""
 done
 
-#TODO: Concatanate all output files in one, or make a ctl template for grads open all them!
+cdo settunits,hours -settaxis,${YYYYMMDDHHi:0:8},${YYYYMMDDHHi:9:2}:00,1hour latlon.nc diagnostics_${YYYYMMDDHHi:0:8}.nc
