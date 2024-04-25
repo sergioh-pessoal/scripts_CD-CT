@@ -84,7 +84,6 @@ done
 
 ln -sf ${DATAIN}/fixed/*.TBL ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/*.GFS ${SCRIPTS}
-ln -sf ${DATAIN}/fixed/Vtable.ERA-interim.pl ${SCRIPTS}
 ln -sf ${EXECS}/init_atmosphere_model ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores} ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.grid.nc ${SCRIPTS}

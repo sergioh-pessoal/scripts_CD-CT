@@ -65,3 +65,30 @@ cp -f setenv.bash ${SCRIPTS}
 
 # Local variables--------------------------------------
 #-------------------------------------------------------
+
+
+# TODO compress all output files
+
+# +cat > Compress_exe.sh <<EOF0
+# +#!/bin/bash
+# +#SBATCH --job-name=Compress
+# +#SBATCH --nodes=1
+# +#SBATCH --partition=PESQ3 
+# +#SBATCH --tasks-per-node=1
+# +#SBATCH --time=24:00:00
+# +#SBATCH --output=${LOGDIR}/my_job_compress.o%j    # File name for standard output
+# +#SBATCH --error=${LOGDIR}/my_job_compress.e%j     # File name for standard error output
+# +#SBATCH --exclusive
+# +
+# +echo -e  "Compressing post processed diagnostics file...\n" >> ${LOG_FILE} 2>&1
+# +tar -cf - diagnostics_${START_DATE_YYYYMMDD}.nc | xz -9 -c - > diagnostics_${START_DATE_YYYYMMDD}.tar.xz
+# +
+# +#echo -e  "Compressing all /monanprd/diag*.nc files...\n" >> ${LOG_FILE} 2>&1
+# +#tar -cf - ${EXPDIR}/monanprd | xz -9 -c - > monanprd_${START_DATE_YYYYMMDD}.tar.xz
+# +
+# +exit 0
+# +EOF0
+# +
+# +chmod +x Compress_exe.sh
+
+

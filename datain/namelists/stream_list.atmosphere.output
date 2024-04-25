@@ -58,6 +58,7 @@ u_pv
 v_pv
 theta_pv
 vort_pv
+iLev_DT
 depv_dt_lw
 depv_dt_sw
 depv_dt_bl
@@ -69,7 +70,6 @@ depv_dt_diab
 depv_dt_fric
 depv_dt_diab_pv
 depv_dt_fric_pv
-iLev_DT
 i_rainnc
 rainnc
 precipw
@@ -96,6 +96,8 @@ acsnow
 pin
 ozmixm
 mminlu
+isice_lu
+iswater_lu
 xland
 skintemp
 snow

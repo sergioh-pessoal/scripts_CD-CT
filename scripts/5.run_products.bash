@@ -66,25 +66,24 @@ cp -f setenv.bash ${SCRIPTS}
 #-------------------------------------------------------
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Prods/logs
 
-# modificar o script grads para gerar a figura correta, com o tempo correto, como é feito na operacao normalmente.
+# TODO modificar o script grads para gerar a figura correta, com o tempo correto, como é feito na operacao normalmente.
 cat << EOGS > ${SCRIPTS}/prec.gs
-'reinit'
+'reinit';'set display color white';'c'
+  
 
-'sdfopen ${DATAOUT}/${YYYYMMDDHHi}/Post/surface.nc'
-
-'set display color white'
 'set gxout shaded'
+
+'sdfopen ${DATAOUT}/${YYYYMMDDHHi}/Post/MONAN_DIAG_G_POS_GFS_${YYYYMMDDHHi}_2024012002.00.00.x1024002L55.nc'
 'set mpdset mres'
 'set grads off'
-'c'
 
 'set lon -83.75 -20.05'
 'set lat -55.75 14.25'
-'set t 2'
+'set t 1'
 'pr1=rainc+rainnc'
 'set t 25'
 'pr25=rainc+rainnc'
- 
+
 'set clevs 0.5 1 2 4 8 16 32 64 128'
 'set ccols 0 14 11 5 13 10 7 12 2 6'
 
@@ -92,9 +91,9 @@ cat << EOGS > ${SCRIPTS}/prec.gs
 'set gxout contour'
 
 'cbar'
-'draw title MONAN APCP+24h'
+'draw title MONAN_${START_DATE_YYYYMMDD} APCP+24h'
 
-'printim ${DATAOUT}/${YYYYMMDDHHi}/Prods/MONAN.png'
+'printim MONAN.png'
 'quit'
 
 EOGS
