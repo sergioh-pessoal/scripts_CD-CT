@@ -18,24 +18,59 @@
 #
 #-----------------------------------------------------------------------------#
 
+#Fixed parameters ------------------------------------------------------------#
+github_link_CONVERT_MPAS="https://github.com/monanadmin/convert_mpas.git"
+#-----------------------------------------------------------------------------#
+
+#Functions -------------------------------------------------------------------#
+function checkout_system() {
+  local source_dir=$1
+  local github_link=$2
+  local tag_or_branch_name=$3
+  if [ -d "${source_dir}" ]; then
+      echo -e  "${GREEN}==>${NC} Source dir already exists, updating it ...\n"
+  else
+      echo -e  "${GREEN}==>${NC} Cloning your fork repository...\n"
+      git clone ${github_link} ${source_dir}
+      if [ ! -d "${source_dir}" ]; then
+          echo -e "${RED}==>${NC} An error occurred while cloning your fork. Possible causes:  wrong URL, user or password.\n"
+          exit -1
+      fi
+  fi
+
+  cd ${source_dir}
+  if git checkout "${tag_or_branch_name}" 2>/dev/null; then
+      git pull
+      echo -e "${GREEN}==>${NC} Successfully checked out and updated: ${BLUE}${tag_or_branch_name}"
+  else
+      echo -e "${RED}==>${NC} Failed to check out branch: ${BLUE}${tag_or_branch_name}"
+      echo -e "${RED}==>${NC} Please check if you have this branch. Exiting ..."
+      exit -1
+  fi
+  git log -1 --name-only
+}
+#-----------------------------------------------------------------------------#
+
+
 if [ $# -lt 1 ]
 then
    echo ""
    echo "Instructions: execute the command below"
    echo ""
-   echo "${0} [G] [B]"
+   echo "${0} [G] [M] [C]"
    echo ""
-   echo "G   :: GitHub link for your personal fork, eg: https://github.com/MYUSER/MONAN-Model.git"
-   echo "B   :: Tag or branch name of your personal fork. (will be used 'develop' if not informed)" 
+   echo "G   :: MONAN GitHub link of your personal fork, eg: https://github.com/MYUSER/MONAN-Model.git"
+   echo "M   :: MONAN tag or branch name of your personal fork. (will be used 'develop' if not informed)" 
+   echo "C   :: Convert_MPAS tag from ${github_link_CONVERT_MPAS} (will be used 'develop' if not informed)"
    echo ""
    exit
 fi
+
 
 # Set environment variables exports:
 echo ""
 echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 . setenv.bash
-
 
 # Standart directories variables:---------------------------------------
 DIRHOMES=${DIR_SCRIPTS}/scripts_CD-CT;  mkdir -p ${DIRHOMES}  
@@ -49,50 +84,24 @@ EXECS=${DIRHOMED}/execs;                mkdir -p ${EXECS}
 
 
 # Input variables:-----------------------------------------------------
-github_link=${1};   #github_link=https://github.com/monanadmin/MONAN-Model.git
-if [ ! -z ${2} ]
-then
-    tag_or_branch_name=${2}
-else
-    tag_or_branch_name="develop"
-fi
-echo "Tag or branch name in use: ${tag_or_branch_name}"
+github_link_MONAN=${1};   #github_link=https://github.com/monanadmin/MONAN-Model.git
+tag_or_branch_name_MONAN=${2}
+tag_or_branch_name_MONAN=${tag_or_branch_name_MONAN:="develop"}
+echo "MONAN branch name in use: ${tag_or_branch_name_MONAN}"
+
+tag_or_branch_name_CONVERT_MPAS=${3}
+tag_or_branch_name_CONVERT_MPAS=${tag_or_branch_name_CONVERT_MPAS:="develop"}
+echo "convert_mpas branch name in use: ${tag_or_branch_name_CONVERT_MPAS}"
 #----------------------------------------------------------------------
 
 
 # Local variables:-----------------------------------------------------
-vlabel=${tag_or_branch_name}
-MONANDIR=${SOURCES}/MONAN-Model_${vlabel}
-CONVERT_MPAS_DIR=${SOURCES}/convert_mpas
+MONANDIR=${SOURCES}/MONAN-Model_${tag_or_branch_name_MONAN}
+CONVERT_MPAS_DIR=${SOURCES}/convert_mpas_${tag_or_branch_name_CONVERT_MPAS}
 #----------------------------------------------------------------------
 
-
-
-
-
-
-if [ -d "${MONANDIR}" ]; then
-    echo -e  "${GREEN}==>${NC} Source dir already exists, updating it ...\n"
-else
-    echo -e  "${GREEN}==>${NC} Cloning your fork repository...\n"
-    git clone ${github_link} ${MONANDIR}
-    if [ ! -d "${MONANDIR}" ]; then
-        echo -e "${RED}==>${NC} An error occurred while cloning your fork. Possible causes:  wrong URL, user or password.\n"
-        exit -1
-    fi
-fi
-
-cd ${MONANDIR}
-if git checkout "${tag_or_branch_name}" 2>/dev/null; then
-    git checkout tags/${vlabel} -b branch_v${vlabel}
-    git pull
-    echo -e "${GREEN}==>${NC} Successfully checked out and updated branch: ${BLUE}${tag_or_branch_name} --> branch_v${vlabel}"
-else
-    echo -e "${RED}==>${NC} Failed to check out branch: ${BLUE}${tag_or_branch_name}"
-    echo -e "${RED}==>${NC} Please check if you have this branch. Exiting ..."
-    exit -1
-fi
-git log -1 --name-only
+checkout_system ${MONANDIR} ${github_link_MONAN} ${tag_or_branch_name_MONAN}
+checkout_system ${CONVERT_MPAS_DIR} ${github_link_CONVERT_MPAS} ${tag_or_branch_name_CONVERT_MPAS}
 
 rm -rf $MONANDIR/default_inputs/ 
 rm -f  $MONANDIR/stream_list.* $MONANDIR/streams.* $MONANDIR/namelist.* 
@@ -102,6 +111,9 @@ rm -f  $MONANDIR/make*.output.atmosphere $MONANDIR/make*.output.init_atmosphere 
 #CR: TODO: maybe later move this make script to main scripts directory.
 echo ""
 echo -e  "${GREEN}==>${NC} Making compile script...\n"
+
+cd $MONANDIR
+
 cat << EOF > make-all.sh
 #!/bin/bash
 #Usage: make target CORE=[core] [options]
@@ -169,10 +181,9 @@ else
     exit -1
 fi
 
-
-
 EOF
 chmod a+x make-all.sh
+
 
 cat << EOF > make.sh
 #!/bin/bash
@@ -247,12 +258,7 @@ echo ""
 . ${MONANDIR}/make-all.sh
 
 
-
-
-
 # install convert_mpas
-
-
 echo ""
 echo -e  "${GREEN}==>${NC} Moduling environment for convert_mpas...\n"
 module purge
@@ -263,24 +269,14 @@ module load netcdf
 module load netcdf-fortran
 module list
 
-
-
-echo ""
-echo -e  "${GREEN}==>${NC} Cloning convert_mpas repository...\n"
-cd ${SOURCES}
-git clone http://github.com/mgduda/convert_mpas.git
-
-
 cd ${CONVERT_MPAS_DIR}
 echo ""
 echo -e  "${GREEN}==>${NC} Installing convert_mpas...\n"
 make clean
 make  2>&1 | tee make.convert.output
 
-
 #CR: TODO: put verify here if executable was created ok
 mv ${CONVERT_MPAS_DIR}/convert_mpas ${EXECS}/
-
 
 if [ -s "${EXECS}/convert_mpas" ] ; then
     echo ""
@@ -290,6 +286,4 @@ else
     echo -e "${RED}==>${NC} !!! An error occurred during convert_mpas build. Check output"
     exit -1
 fi
-
-
 
