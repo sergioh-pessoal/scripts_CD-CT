@@ -68,7 +68,7 @@ START_HH="${YYYYMMDDHHi:8:2}"
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Post/logs
 
 
-files_needed=("${DATAIN}/namelists/include_fields.diag" "${EXECS}/convert_mpas" "${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc")
+files_needed=("${DATAIN}/namelists/include_fields.diag" "${DATAIN}/namelists/convert_mpas.nml" "${DATAIN}/namelists/target_domain" "${EXECS}/convert_mpas" "${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc")
 for file in "${files_needed[@]}"
 do
   if [ ! -s "${file}" ]
@@ -91,6 +91,9 @@ do
   cd ${SCRIPTS}/dir.${outputfile}.dir
 
   ln -sf ${DATAIN}/namelists/include_fields.diag  ${SCRIPTS}/dir.${outputfile}.dir/include_fields
+  ln -sf ${DATAIN}/namelists/convert_mpas.nml ${SCRIPTS}/dir.${outputfile}.dir/convert_mpas.nml
+  ln -sf ${DATAIN}/namelists/target_domain ${SCRIPTS}/dir.${outputfile}.dir/target_domain
+
   ln -sf ${EXECS}/convert_mpas ${SCRIPTS}/dir.${outputfile}.dir
   ln -sf ${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc ${SCRIPTS}/dir.${outputfile}.dir
   post_name=$(echo "${outputfile}" | sed -e "s,_MOD_,_POS_,g")
@@ -124,7 +127,8 @@ rm -f latlon.nc
 date
 time ./\${executable} x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Model/${outputfile}
 date
-cdo settunits,hours -settaxis,${YYYYMMDDHHi:0:8},${YYYYMMDDHHi:9:2}:00,1hour latlon.nc ${DATAOUT}/${YYYYMMDDHHi}/Post/${post_name}
+# DE: TODO DO NOT NEED WITH NEW CONVERT_MPAS - REMOVE COMMENT
+# cdo settunits,hours -settaxis,${YYYYMMDDHHi:0:8},${YYYYMMDDHHi:9:2}:00,1hour latlon.nc ${DATAOUT}/${YYYYMMDDHHi}/Post/${post_name}
 
 rm -fr ${SCRIPTS}/dir.${outputfile}.dir
 
@@ -140,4 +144,5 @@ EOF0
   echo ""
 done
 
-cdo settunits,hours -settaxis,${YYYYMMDDHHi:0:8},${YYYYMMDDHHi:9:2}:00,1hour latlon.nc diagnostics_${YYYYMMDDHHi:0:8}.nc
+# DE: TODO - CONCATENATE FILES
+# cdo settunits,hours -settaxis,${YYYYMMDDHHi:0:8},${YYYYMMDDHHi:9:2}:00,1hour latlon.nc diagnostics_${YYYYMMDDHHi:0:8}.nc
