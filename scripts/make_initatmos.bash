@@ -147,6 +147,7 @@ chmod a+x ${SCRIPTS}/initatmos.bash
 echo -e  "${GREEN}==>${NC} Executing sbatch initatmos.bash...\n"
 cd ${SCRIPTS}
 sbatch --wait ${SCRIPTS}/initatmos.bash
+mv ${SCRIPTS}/initatmos.bash ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
 
 if [ ! -s ${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc ]
 then

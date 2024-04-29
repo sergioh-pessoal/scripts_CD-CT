@@ -84,6 +84,7 @@ done
 
 cd  ${DATAOUT}/${YYYYMMDDHHi}/Model
 for outputfile in MONAN_DIAG_*nc
+#for outputfile in MONAN_DIAG_G_MOD_GFS_2024010100_2024010100.00.00.x1024002L55.nc
 do
   echo ${outputfile}
   cd ${SCRIPTS}
@@ -110,7 +111,7 @@ cat << EOF0 > ${SCRIPTS}/dir.${outputfile}.dir/post.bash
 #SBATCH --output=${DATAOUT}/${YYYYMMDDHHi}/Post/logs/post.bash.o%j    # File name for standard output
 #SBATCH --error=${DATAOUT}/${YYYYMMDDHHi}/Post/logs/post.bash.e%j     # File name for standard error output
 ##SBATCH --exclusive
-##SBATCH --mem=500000
+#SBATCH --mem=32000
 
 
 export executable=convert_mpas
@@ -127,6 +128,8 @@ rm -f latlon.nc
 date
 time ./\${executable} x1.${RES}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Model/${outputfile}
 date
+mv latlon.nc ${DATAOUT}/${YYYYMMDDHHi}/Post/${post_name}
+
 # DE: TODO DO NOT NEED WITH NEW CONVERT_MPAS - REMOVE COMMENT
 # cdo settunits,hours -settaxis,${YYYYMMDDHHi:0:8},${YYYYMMDDHHi:9:2}:00,1hour latlon.nc ${DATAOUT}/${YYYYMMDDHHi}/Post/${post_name}
 
@@ -140,7 +143,7 @@ EOF0
   echo -e  "sbatch ${SCRIPTS}/dir.${outputfile}.dir/post.bash"
   echo ""
   sbatch ${SCRIPTS}/dir.${outputfile}.dir/post.bash
-
+  sleep 1
   echo ""
 done
 

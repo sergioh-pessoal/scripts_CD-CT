@@ -156,6 +156,7 @@ chmod a+x ${SCRIPTS}/static.bash
 echo -e  "${GREEN}==>${NC} Executing sbatch static.bash...\n"
 cd ${SCRIPTS}
 sbatch --wait ${SCRIPTS}/static.bash
+mv ${SCRIPTS}/static.bash ${DATAOUT}/logs/
 
 if [ -s ${SCRIPTS}/x1.${RES}.static.nc ]
 then
