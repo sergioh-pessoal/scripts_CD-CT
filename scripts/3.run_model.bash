@@ -94,7 +94,9 @@ then
    rm -fr x1.${RES}.tar.gz x1.${RES}_static.tar.gz
 fi
 
-files_needed=("${EXECS}/atmosphere_model" "${DATAIN}/fixed/x1.${RES}.static.nc" "${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores}" "${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc" "${DATAIN}/fixed/Vtable.GFS")
+rm -f ${SCRIPTS}/atmosphere_model ${SCRIPTS}/*TBL ${SCRIPTS}/*DBL ${SCRIPTS}/*DATA ${SCRIPTS}/x1.${RES}.static.nc ${SCRIPTS}/x1.${RES}.graph.info.part.${cores} ${SCRIPTS}/x1.${RES}.init.nc 
+
+files_needed=("${DATAIN}/namelists/stream_list.atmosphere.output" ""${DATAIN}/namelists/stream_list.atmosphere.diagnostics "${DATAIN}/namelists/stream_list.atmosphere.surface" "${EXECS}/atmosphere_model" "${DATAIN}/fixed/x1.${RES}.static.nc" "${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores}" "${DATAOUT}/${YYYYMMDDHHi}/Pre/x1.${RES}.init.nc" "${DATAIN}/fixed/Vtable.GFS")
 for file in "${files_needed[@]}"
 do
   if [ ! -s "${file}" ]
@@ -123,7 +125,9 @@ then
    sed -e "s,#RES#,${RES},g;s,#CIORIG#,${EXP},g;s,#LABELI#,${YYYYMMDDHHi},g;s,#NLEV#,${NLEV},g" \
    ${DATAIN}/namelists/streams.atmosphere.TEMPLATE > ${SCRIPTS}/streams.atmosphere
 fi
-cp -f ${DATAIN}/namelists/stream_list.atmosphere.* ${SCRIPTS}
+cp -f ${DATAIN}/namelists/stream_list.atmosphere.output ${SCRIPTS}
+cp -f ${DATAIN}/namelists/stream_list.atmosphere.diagnostics ${SCRIPTS}
+cp -f ${DATAIN}/namelists/stream_list.atmosphere.surface ${SCRIPTS}
 
 
 
@@ -183,23 +187,10 @@ rm -f ${SCRIPTS}/x1.${RES}.init.nc
 EOF0
 chmod a+x ${SCRIPTS}/model.bash
 
+
 echo -e  "${GREEN}==>${NC} Submitting MONAN atmosphere model and waiting for finish before exit... \n"
 echo -e  "${GREEN}==>${NC} Logs being generated at ${DATAOUT}/logs... \n"
 echo -e  "sbatch ${SCRIPTS}/model.bash"
 sbatch --wait ${SCRIPTS}/model.bash
+mv ${SCRIPTS}/model.bash ${DATAOUT}/${YYYYMMDDHHi}/Model/logs
 
-
-#CR: make a subroutine to check each output file gerated here! 
-#CR: Very important make sure all files was created correctly before go foreward
-#CR: Copy all model output files to his final name: e.g: 
-#
-# MONANGMODGFSYYYYMMDDHHyyyymmddhh.24kmL55.nc
-# |---|||-||-||--------||--------|  |   |  |--file format
-# |    ||  |  |         |           |   |--levels quant.
-# |    ||  |  |         |           |--resolution, also could be 1024002, e.g.
-# |    ||  |  |         |--Forecast final date
-# |    ||  |  |--Initial condition date
-# |    ||  |--Initial condition source type: GFS, ERA5, ERAI, etc
-# |    ||--MOD for model, POS for post processed output files
-# |    |-- Type fo horiontal domain: G for global, R for regional, etc.
-# |--Name of the model: MONAN

@@ -147,7 +147,8 @@ cat << EOF > make-all.sh
 #    SHAREDLIB=true - generate position-independent code suitable for use in a shared library. Default is false.
 
 
-rm -f ${MONANDIR}/stream_list.*
+. ${SCRIPTS}/setenv.bash
+rm -fr ${MONANDIR}/stream* ${MONANDIR}/namelist.* ${MONANDIR}/make_*output.atmosphere ${MONANDIR}/default_inputs
 DATE_TIME_NOW=\$(date +"%Y%m%d%H%M%S")
 
 export NETCDF=${NETCDFDIR}
@@ -217,7 +218,8 @@ cat << EOF > make.sh
 #    PRECISION=single - builds with default single-precision real kind. Default is to use double-precision.
 #    SHAREDLIB=true - generate position-independent code suitable for use in a shared library. Default is false.
 
-rm -f ${MONANDIR}/stream_list.*
+. ${SCRIPTS}/setenv.bash
+rm -fr ${MONANDIR}/stream* ${MONANDIR}/namelist.* ${MONANDIR}/make_*output.atmosphere ${MONANDIR}/default_inputs
 DATE_TIME_NOW=\$(date +"%Y%m%d%H%M%S")
 
 
