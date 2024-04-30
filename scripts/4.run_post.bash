@@ -83,7 +83,7 @@ done
 
 
 cd  ${DATAOUT}/${YYYYMMDDHHi}/Model
-for outputfile in MONAN_DIAG_*nc
+for outputfile in MONAN_*MOD*nc
 #for outputfile in MONAN_DIAG_G_MOD_GFS_2024010100_2024010100.00.00.x1024002L55.nc
 do
   echo ${outputfile}
