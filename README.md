@@ -1,16 +1,17 @@
 # MONAN - Model for Ocean-laNd-Atmosphere PredictioN
 
-### *Pre-operational tests for MONAN with GFS at Egeon*
+### *Continuous Deployment & Continuous Testing (CD-CT) for MONAN at Egeon*
 
-This folder aims to create a pre-operations version for testing MONAN with GFS at Egeon.
+This folder aims to create a version for testing MONAN with GFS at Egeon.
 
 ## History:
 
 **TODO** - Create tag and fix text for first revision below
 
 v0.1.0 - Initial revision
-- Used the parameter PARAM_XXX to select date for execution
-- create a cron to run daily the scritpt
+- Used the parameter PARAM_XXX to select date for execution.
+- Create a cron to run daily the scritpt.
+- Post-processing with the new version of convert_mpas making it possible to use grads.
 
 
 ### Implementation at Egeon:
@@ -33,11 +34,11 @@ You will need to execute only 6 steps scripts, so you can run the Atmospheric MO
 
 **1. Install the model:**
 
-- First you need to get a **fork repository** in your github account of a MONAN oficial repo: `https://github.com/monanadmin/monan.git`
+- First you need to get a **fork repository** in your github account of a MONAN oficial repo: `https://github.com/monanadmin/MONAN-Model`. Attention! Uncheck "Copy the main branch only" in the fork creation step to copy all branches. 
 - The you can install the model in your work directory by running:
 
 ~~~
-1.install_monan.bash <https://github.com/MYUSER/MONAN-Model.git>
+1.install_monan.bash <https://github.com/MYUSER/MONAN-Model-My-Fork.git>
 ~~~
 
 - This first step will create a standart diretories structures for work:
@@ -130,4 +131,10 @@ FCST        :: Forecast hours, e.g.: 24 or 36, etc.
 
 24 hour forcast example:
 ./5.run_products.bash GFS 1024002 2024010100 24
+~~~
+
+- Display figure:
+~~~
+$ module load imagemagick-7.0.8-7-gcc-11.2.0-46pk2go
+$ display ../dataout/2024010100/Prods/MONAN_PREC_GFS_2024010100_2024010103.00.00.x1024002L55.png
 ~~~
