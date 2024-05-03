@@ -1,16 +1,17 @@
 # MONAN - Model for Ocean-laNd-Atmosphere PredictioN
 
-### *Pre-operational tests for MONAN with GFS at Egeon*
+### *Continuous Deployment & Continuous Testing (CD-CT) for MONAN at Egeon*
 
-This folder aims to create a pre-operations version for testing MONAN with GFS at Egeon.
+This folder aims to create a version for testing MONAN with GFS at Egeon.
 
 ## History:
 
 **TODO** - Create tag and fix text for first revision below
 
 v0.1.0 - Initial revision
-- Used the parameter PARAM_XXX to select date for execution
-- create a cron to run daily the scritpt
+- Used the parameter PARAM_XXX to select date for execution.
+- Create a cron to run daily the scritpt.
+- Post-processing with the new version of convert_mpas making it possible to use grads.
 
 
 ### Implementation at Egeon:
