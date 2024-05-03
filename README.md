@@ -131,3 +131,9 @@ FCST        :: Forecast hours, e.g.: 24 or 36, etc.
 24 hour forcast example:
 ./5.run_products.bash GFS 1024002 2024010100 24
 ~~~
+
+Final Test:
+~~~
+$ module load imagemagick-7.0.8-7-gcc-11.2.0-46pk2go
+$ display ../dataout/2024010100/Prods/MONAN_PREC_GFS_2024010100_2024010103.00.00.x1024002L55.png
+~~~
