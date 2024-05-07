@@ -64,7 +64,6 @@ FCST=${4};        #FCST=6
 # Local variables--------------------------------------
 START_DATE_YYYYMMDD="${YYYYMMDDHHi:0:4}-${YYYYMMDDHHi:4:2}-${YYYYMMDDHHi:6:2}"
 START_HH="${YYYYMMDDHHi:8:2}"
-maxpost=30
 #-------------------------------------------------------
 mkdir -p ${DATAOUT}/${YYYYMMDDHHi}/Post/logs
 
@@ -80,84 +79,10 @@ do
   fi
 done
 
-how_many_nodes ${FCST} ${maxpost}
-
-cd  ${SCRIPTS}
-comando=$(ls -1 MONAN_*MOD*nc)
-nfiles=(${comando})
-
-if [ ${how_many_nodes_int} -eq 1 -a ${how_many_nodes_left} -eq 0 ]
-then  
-  maxpost=${FCST}
-fi
-
-ifi=0
-for nsubs in  $(seq 1 ${how_many_nodes_int})
-do
-  cd ${SCRIPTS}
-  iin=$(echo "${ifi}+1" | bc)
-  ifi=$(echo "${nsubs}*${maxpost}" | bc)
-  echo "nsubi = ${nsubs}, ${iin} - ${ifi}"
-
-
-rm -f ${SCRIPTS}/post_${nsubs}.bash 
-cat << EOF0 > ${SCRIPTS}/post_${nsubs}.bash 
-#!/bin/bash
-#SBATCH --job-name=${POST_jobname}
-#SBATCH --nodes=${POST_nnodes}
-#SBATCH --ntasks=${POST_ncores}
-#SBATCH --tasks-per-node=${POST_ncpn}
-#SBATCH --partition=${POST_QUEUE}
-#SBATCH --time=${POST_walltime}
-#SBATCH --output=${DATAOUT}/${YYYYMMDDHHi}/Post/logs/post_${nsubs}.bash.o%j    # File name for standard output
-#SBATCH --error=${DATAOUT}/${YYYYMMDDHHi}/Post/logs/post_${nsubs}.bash.e%j     # File name for standard error output
-
-cd  ${SCRIPTS}
-comando=\$(ls -1 MONAN_*MOD*nc)
-nfiles=(\${comando})
-
-
-  for outputfile in \$(seq ${iin} ${ifi})
-  do
-    echo "     \${outputfile} :: \${nfiles[\${outputfile}]}"
-  done
 
 
 
-
-
-EOF0
-chmod a+x ${SCRIPTS}/post_${nsubs}.bash 
-sbatch ${SCRIPTS}/post_${nsubs}.bash 
-
-
-
-
-done
-
-maxpost=30
-for nsubs in  $(seq 1 ${how_many_nodes_left})
-do
-  iin=$(echo "${ifi}+1" | bc)
-  ifi=$(echo "${ifi}+${rest}" | bc)
-  echo "nsubl = ${nsubs}, ${iin} - ${ifi}"
-
-  for outputfile in $(seq ${iin} ${ifi})
-  do
-    echo "     ${outputfile} :: ${nfiles[${outputfile}]}"
-  done
-done
-
-
-
-exit
-
-
-
-#for nsubs in  $(seq 1 ${how_many_nodes})
-#do 
-
-  cd  ${DATAOUT}/${YYYYMMDDHHi}/Model
+cd  ${DATAOUT}/${YYYYMMDDHHi}/Model
 for outputfile in MONAN_*MOD*nc
 #for outputfile in MONAN_DIAG_G_MOD_GFS_2024010100_2024010100.00.00.x1024002L55.nc
 do
