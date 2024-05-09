@@ -4,17 +4,15 @@
 # !SCRIPT: install_monan
 #
 # !DESCRIPTION:
-#     Script to intall the MONAN model from a user github repositry.
+#     Script to install the MONAN model and convert_MPAS.
 #     
 #     Performs the following tasks:
 # 
-#        o Clone the Monan model github repository v0.1.0 in a local directory
-#        o Uses the "develop" branch
+#        o Clone the Monan model github repository in a local directory
 #        o Make the script make-all.sh that compiles the Atmosphere Model and the Init Atmosphere Model
-#        o As alternative for advanced users, this scrpt creates a simple compile script that just compile the Atmosphere Model
-#        o Clone the COnvert_mpas tool from the official repository for convert the output model files in lat-lon grid.
-#        o COmpile the convert_mpas
-#        o Post-processing (netcdf for grib2, latlon regrid, crop) (CR: to be modified to phase 4)
+#        o As alternative for advanced users, this script creates a simple compile script that just compile the Atmosphere Model
+#        o Clone the Convert_mpas tool from the monanadmin repository for convert the output model files in lat-lon grid.
+#        o Compile the convert_mpas
 #
 #-----------------------------------------------------------------------------#
 
