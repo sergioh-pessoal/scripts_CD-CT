@@ -25,7 +25,7 @@ def main(data_dir, file_in, file_out):
     # Save the concatenated variables to a new NetCDF file
     nc_file_out = nc.Dataset(f'{data_dir}/{file_out}', 'w')
 
-    dimensions_4D = ('time', 'latitude', 'longitude', 'level')
+    dimensions_4D = ('time', 'level', 'latitude', 'longitude')
     # Group variables based on their names
     variable_groups = {}
     first_hpa_variable = ''
@@ -41,30 +41,18 @@ def main(data_dir, file_in, file_out):
         else:
             variable_groups[variable_type].append(variable)
 
-
     level_dimension_size = len(variable_groups[first_hpa_variable]) 
-
 
     # Copy dimensions Time, latitude, longitude
     for dim_name, dim_type in nc_file_in.dimensions.items():
         if dim_name.lower() in ['time', 'latitude', 'longitude']:
             nc_file_out.createDimension(dim_name.lower(), dim_type.size)
-    # Create level dimension
     nc_file_out.createDimension('level', level_dimension_size)
+    
 
     # Copy variables
     for variable_type, variables in variable_groups.items():
         print(f'Creating var {variable_type}')
-        # Create an empty list to store lowercase dimensions
-#        lowercase_dimensions = []
-#    
-#        # Iterate through each object in the tuple
-#        for obj in variables[0].dimensions:
-#            # Access the 'dimensions' attribute and convert to lowercase
-#            lowercase_dimensions.append(obj.lower())
-#            # Convert the list of lowercase dimensions to a tuple
-#
-#        lowercase_dimensions_tuple = tuple(lowercase_dimensions)
         if variable_type == 'level':
             new_variable = nc_file_out.createVariable(variable_type, variables[0].dtype, (variable_type) )
             new_variable.setncatts({k: variables[0].getncattr(k) for k in variables[0].ncattrs()})
@@ -74,7 +62,7 @@ def main(data_dir, file_in, file_out):
             new_variable.setncatts({k: variables[0].getncattr(k) for k in variables[0].ncattrs()})
             for i in range(level_dimension_size):
                 print(f'copying variable level {i}')
-                new_variable[:,:,:,i] = variables[i][:]
+                new_variable[:,i,:,:] = variables[i][:]
         else:
             # Create an empty list to store lowercase dimensions
             lowercase_dimensions = []
