@@ -126,3 +126,8 @@ how_many_nodes () {
    echo "number of nodes left:       \${how_many_nodes_left} = ${how_many_nodes_left}"
    echo ""
 }
+
+
+# Set python environment:
+echo "setting python environment"
+. setenv_python.bash
