@@ -35,7 +35,7 @@ def main(data_dir, file_in, file_out):
             variable_type = re.split('_.*hPa', name)[0]  # Extract the variable type (e.g., '15hPa', '20hPa')
             first_hpa_variable = variable_type if first_hpa_variable == '' else first_hpa_variable  
         else:
-            variable_type = name
+            variable_type = name.lower()
         if variable_type not in variable_groups:
             variable_groups[variable_type] = [variable]
         else:
@@ -48,15 +48,25 @@ def main(data_dir, file_in, file_out):
     # Copy dimensions Time, latitude, longitude
     for dim_name, dim_type in nc_file_in.dimensions.items():
         if dim_name.lower() in ['time', 'latitude', 'longitude']:
-            nc_file_out.createDimension(dim_name, dim_type.size)
+            nc_file_out.createDimension(dim_name.lower(), dim_type.size)
     # Create level dimension
     nc_file_out.createDimension('level', level_dimension_size)
 
     # Copy variables
     for variable_type, variables in variable_groups.items():
         print(f'Creating var {variable_type}')
+        # Create an empty list to store lowercase dimensions
+#        lowercase_dimensions = []
+#    
+#        # Iterate through each object in the tuple
+#        for obj in variables[0].dimensions:
+#            # Access the 'dimensions' attribute and convert to lowercase
+#            lowercase_dimensions.append(obj.lower())
+#            # Convert the list of lowercase dimensions to a tuple
+#
+#        lowercase_dimensions_tuple = tuple(lowercase_dimensions)
         if variable_type == 'level':
-            new_variable = nc_file_out.createVariable(variable_type, variables[0].dtype, variables[0].dimensions)
+            new_variable = nc_file_out.createVariable(variable_type, variables[0].dtype, (variable_type) )
             new_variable.setncatts({k: variables[0].getncattr(k) for k in variables[0].ncattrs()})
             new_variable[:] = range(level_dimension_size, 0, -1)
         elif len(variables) == level_dimension_size:
@@ -66,8 +76,18 @@ def main(data_dir, file_in, file_out):
                 print(f'copying variable level {i}')
                 new_variable[:,:,:,i] = variables[i][:]
         else:
+            # Create an empty list to store lowercase dimensions
+            lowercase_dimensions = []
+        
+            # Iterate through each object in the tuple
+            for obj in variables[0].dimensions:
+                # Access the 'dimensions' attribute and convert to lowercase
+                lowercase_dimensions.append(obj.lower())
+                # Convert the list of lowercase dimensions to a tuple
+    
+            lowercase_dimensions_tuple = tuple(lowercase_dimensions)            
             # variable_type in ('latitude', 'longitude', 'Time'):
-            new_variable = nc_file_out.createVariable(variable_type, variables[0].dtype, variables[0].dimensions)
+            new_variable = nc_file_out.createVariable(variable_type, variables[0].dtype, lowercase_dimensions_tuple)
             new_variable.setncatts({k: variables[0].getncattr(k) for k in variables[0].ncattrs()})
             new_variable[:] = variables[0][:]
 
@@ -79,7 +99,7 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) != 4:
-        print("Usage: python script.py <string1> <string2>")
+        print(f"Usage: python {sys.argv[0]} <workdir> <filein> <fileout>")
         sys.exit(1)
 
     main(sys.argv[1], sys.argv[2], sys.argv[3])

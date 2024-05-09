@@ -127,7 +127,3 @@ how_many_nodes () {
    echo ""
 }
 
-
-# Set python environment:
-echo "setting python environment"
-. setenv_python.bash

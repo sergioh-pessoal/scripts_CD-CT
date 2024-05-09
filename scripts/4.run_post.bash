@@ -45,7 +45,7 @@ echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
 # Standart directories variables:---------------------------------------
 DIRHOMES=${DIR_SCRIPTS}/scripts_CD-CT; mkdir -p ${DIRHOMES}  
 DIRHOMED=${DIR_DADOS}/scripts_CD-CT;   mkdir -p ${DIRHOMED}  
-SCRIPTS=${DIRHOMES}/scripts;           mkdir -p ${SCRIPTS}
+export SCRIPTS=${DIRHOMES}/scripts;    mkdir -p ${SCRIPTS}
 DATAIN=${DIRHOMED}/datain;             mkdir -p ${DATAIN}
 DATAOUT=${DIRHOMED}/dataout;           mkdir -p ${DATAOUT}
 SOURCES=${DIRHOMES}/sources;           mkdir -p ${SOURCES}
@@ -127,6 +127,7 @@ cat > PostAtmos_exe.sh <<EOF0
 #SBATCH --exclusive
 
 . ${SCRIPTS}/setenv.bash
+. ${SCRIPTS}/setenv_python.bash
 
 datai=$YYYYMMDDHHi
 resolution=$RES
@@ -150,6 +151,7 @@ do
 
    time ./convert_mpas x1.\${resolution}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Model/\$diag_name  > saida.txt & 
    echo "./convert_mpas x1.\${resolution}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Model/\$diag_name"
+
 done
 
 # necessario aguardar as rodadas em background
@@ -169,20 +171,33 @@ do
 
    time ./convert_mpas x1.\${resolution}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Model/\$diag_name  > saida.txt &
    echo "./convert_mpas x1.\${resolution}.init.nc ${DATAOUT}/${YYYYMMDDHHi}/Model/\$diag_name"
+
 done
 
 # necessario aguardar as rodadas em background
 wait
+
+for i in \$(seq 0 $FCST)
+do
+   cd ${SCRIPTS}/dir.\${i}
+   python ${SCRIPTS}/group_levels.py ${SCRIPTS}/dir.\${i} latlon.nc latlon_\${i}.nc > saida_python.txt &
+done
+
+wait
+
+# unload the python's environment
+deactivate
 
 cd ${DATAOUT}/${YYYYMMDDHHi}/Post/
 rm -f diag* latlon*
 
 for i in \$(seq 0 $FCST)
 do
-   mv ${SCRIPTS}/dir.\$i/latlon.nc ./latlon_\$i.nc 
+   mv ${SCRIPTS}/dir.\$i/latlon_\${i}.nc ./latlon_\$i.nc 
 done
 
-find . -maxdepth 1 -name "latlon_*" | sort -n -t _ -k 2 | cut -c3- | sed ':a;$!N;s/\n//;ta;' | sed 's/nc/nc /g' | xargs ncrcat -o latlon.nc
+#find . -maxdepth 1 -name "latlon_*" | sort -n -t _ -k 2 | cut -c3- | sed ':a;$!N;s/\n//;ta;' | sed 's/nc/nc /g' | xargs ncrcat -o latlon.nc
+find . -maxdepth 1 -name "latlon_*" | sort -n -t _ -k 2 | cut -c3- | sed ':a;$!N;s/\n//;ta;' | sed 's/nc/nc /g' | xargs -I "{}"  cdo mergetime {} latlon.nc
 
 cdo settunits,hours -settaxis,${START_DATE_YYYYMMDD},${START_HH}:00,1hour latlon.nc diagnostics_${START_DATE_YYYYMMDD}.nc
 
