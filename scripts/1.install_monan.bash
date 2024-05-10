@@ -76,6 +76,7 @@ DIRHOMED=${DIR_DADOS}/scripts_CD-CT;    mkdir -p ${DIRHOMED}
 SCRIPTS=${DIRHOMES}/scripts;            mkdir -p ${SCRIPTS}
 DATAIN=${DIRHOMED}/datain;              mkdir -p ${DATAIN}
 DATAOUT=${DIRHOMED}/dataout;            mkdir -p ${DATAOUT}
+DATAOUTCRON=${DATAOUT}/cron;            mkdir -p ${DATAOUTCRON}
 SOURCES=${DIRHOMES}/sources;            mkdir -p ${SOURCES}
 EXECS=${DIRHOMED}/execs;                mkdir -p ${EXECS}
 #----------------------------------------------------------------------
@@ -96,6 +97,7 @@ echo "convert_mpas branch name in use: ${tag_or_branch_name_CONVERT_MPAS}"
 # Local variables:-----------------------------------------------------
 MONANDIR=${SOURCES}/MONAN-Model_${tag_or_branch_name_MONAN}
 CONVERT_MPAS_DIR=${SOURCES}/convert_mpas_${tag_or_branch_name_CONVERT_MPAS}
+$(sed -i "s;MONANDIR=.*$;MONANDIR=$MONANDIR;" setenv.bash)
 #----------------------------------------------------------------------
 
 checkout_system ${MONANDIR} ${github_link_MONAN} ${tag_or_branch_name_MONAN}

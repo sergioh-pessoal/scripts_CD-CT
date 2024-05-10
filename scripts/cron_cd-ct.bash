@@ -1,0 +1,85 @@
+#!/bin/bash -l
+set -m
+
+echo -e "\033[1;32m==>\033[0m Moduling environment for MONAN model...\n"
+
+. setenv.bash
+
+# Input variables:-----------------------------------------------------
+github_link=https://github.com/monanadmin/MONAN-Model.git
+EXP=GFS
+RES=1024002
+YYYYMMDDHHi=$(date "+%Y%m%d")"00"
+FCST=240
+#----------------------------------------------------------------------
+
+# Standart directories variables:---------------------------------------
+DIRHOMES=${DIR_SCRIPTS}/scripts_CD-CT;
+DIRHOMED=${DIR_DADOS}/scripts_CD-CT;
+SCRIPTS=${DIRHOMES}/scripts;
+DATAIN=${DIRHOMED}/datain;
+DATAOUT=${DIRHOMED}/dataout;
+SOURCES=${DIRHOMES}/sources;
+EXECS=${DIRHOMED}/execs;
+datereg=$(date "+%Y%m%d-%H%M")
+logfile=${DATAOUT}/cron/cron-${datereg}.log
+ftpdir=/pesq/share/monan/testes_continuos_CD-CT
+ftpdirprods=${ftpdir}/prods/${YYYYMMDDHHi}
+#----------------------------------------------------------------------
+
+# Start CRON
+echo "========== Start Cron -" $(date "+%d%m%Y-%H%M%S") "==========" > ${logfile}
+echo "" >> ${logfile}
+
+# Coleting GitHub Status and Logs
+cd ${MONANDIR}
+echo "MONAN-Model Git Status e Git Log:" >> ${logfile}
+git status | head -1 >> ${logfile}
+git log | head -1 >> ${logfile}
+echo "" >> ${logfile}
+
+cd ${SCRIPTS}
+echo "Scripts_CD-CT Git Status e Git Log:" >> ${logfile}
+git status | head -1 >> ${logfile}
+git log | head -1 >> ${logfile}
+echo "" >> ${logfile}
+
+# Parameters
+echo "EXP = " ${EXP} >> ${logfile}
+echo "RES = " ${RES} >> ${logfile}
+echo "YYYYMMDDHHi = " ${YYYYMMDDHHi} >> ${logfile}
+echo "FCST = " ${FCST} >> ${logfile}
+echo "" >> ${logfile}
+
+# STEP 1: Installing and compiling the A-MONAN model and utility programs:
+# Don't used for CRON
+
+# STEP 2: Executing the pre-processing fase. Preparing all CI/CC files needed:
+time ./2.pre_processing.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} >> ${logfile} 2>&1
+wait
+
+# STEP 3: Executing the Model run:
+time ./3.run_model.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} >> ${logfile} 2>&1
+wait
+
+# STEP 4: Executing the Post of Model run:
+time ./4.run_post.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} >> ${logfile} 2>&1
+wait
+
+# STEP 5: Executing the Products
+time ./5.run_products.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} >> ${logfile} 2>&1
+wait
+
+# Copy PNG Prods to FTP
+if [ ! -d ${ftpdirprods} ];
+then
+    mkdir -p ${ftpdirprods}
+    echo "Crreating ftp folder..." >> ${logfile}
+    echo "" >> ${logfile}
+fi
+echo "Copying MONAN_PREC_*.png to FTP..." >> ${logfile}
+echo "" >> ${logfile}
+cp ${DATAOUT}/${YYYYMMDDHHi}/Prods/MONAN_PREC_*.png ${ftpdirprods}
+
+# Cron finished
+echo "========== Finished Cron -" $(date "+%d%m%Y-%H%M%S") "==========" >> ${logfile}

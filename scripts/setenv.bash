@@ -28,9 +28,9 @@ module list
 
 # MONAN-suite install root directories:
 # Put your directories:
-export DIR_SCRIPTS=$(pwd)/../..
-export DIR_DADOS=$(pwd)/../..
-
+export DIR_SCRIPTS=$(dirname $(dirname $(pwd)))
+export DIR_DADOS=$(dirname $(dirname $(pwd)))
+export MONANDIR=$MONANDIR
 
 # Submiting variables:
 
