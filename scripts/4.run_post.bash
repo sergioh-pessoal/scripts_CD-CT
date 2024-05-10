@@ -211,6 +211,9 @@ chmod +x PostAtmos_exe.sh
 
 sbatch --wait ${SCRIPTS}/PostAtmos_exe.sh
 
+rm -f ${SCRIPTS}/PostAtmos_exe.sh
+
+
 # EGK: fim da implementacao do paralelismo de MONAN-scripts/egeon_oper para a tarefa 488.
 
 
