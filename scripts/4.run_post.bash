@@ -209,7 +209,7 @@ do
    rm -rf ${DATAOUT}/${YYYYMMDDHHi}/Post/latlon_\${i}.nc
 done
 
-rm -rf ${SCRIPTS}/dir.*
+rm -rf ${SCRIPTS}/dir.* ${DATAOUT}/${YYYYMMDDHHi}/Post/latlon.nc
 
 exit 0
 EOF0
