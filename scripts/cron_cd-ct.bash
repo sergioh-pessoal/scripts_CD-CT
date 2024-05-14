@@ -24,7 +24,7 @@ EXECS=${DIRHOMED}/execs;
 datereg=$(date "+%Y%m%d-%H%M")
 logfile=${DATAOUT}/cron/cron-${datereg}.log
 ftpdir=/pesq/share/monan/testes_continuos_CD-CT
-ftpdirprods=${ftpdir}/prods/${YYYYMMDDHHi}
+ftpdircron=${ftpdir}/cron/${YYYYMMDDHHi}
 #----------------------------------------------------------------------
 
 # Start CRON
@@ -66,20 +66,9 @@ wait
 time ./4.run_post.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} >> ${logfile} 2>&1
 wait
 
-# STEP 5: Executing the Products
-time ./5.run_products.bash ${EXP} ${RES} ${YYYYMMDDHHi} ${FCST} >> ${logfile} 2>&1
-wait
-
-# Copy PNG Prods to FTP
-if [ ! -d ${ftpdirprods} ];
-then
-    mkdir -p ${ftpdirprods}
-    echo "Crreating ftp folder..." >> ${logfile}
-    echo "" >> ${logfile}
-fi
-echo "Copying MONAN_PREC_*.png to FTP..." >> ${logfile}
-echo "" >> ${logfile}
-cp ${DATAOUT}/${YYYYMMDDHHi}/Prods/MONAN_PREC_*.png ${ftpdirprods}
-
 # Cron finished
 echo "========== Finished Cron -" $(date "+%d%m%Y-%H%M%S") "==========" >> ${logfile}
+
+# Copy log cron to FTP
+mkdir -p ${ftpdircron}
+cp ${logfile} ${ftpdircron}
