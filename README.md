@@ -1,16 +1,16 @@
 # MONAN - Model for Ocean-laNd-Atmosphere PredictioN
 
-### *Pre-operational tests for MONAN with GFS at Egeon*
+### *Continuous Deployment & Continuous Testing (CD-CT) for MONAN at Egeon*
 
-This folder aims to create a pre-operations version for testing MONAN with GFS at Egeon.
+This folder aims to create a version for testing MONAN with GFS at Egeon.
 
 ## History:
 
-**TODO** - Create tag and fix text for first revision below
-
-v0.1.0 - Initial revision
-- Used the parameter PARAM_XXX to select date for execution
-- create a cron to run daily the scritpt
+0.1.0
+- Used parameterization to select the date for execution.
+- Created cron script for daily executions.
+- Post-processing is with the new version of convert_mpas, enabling the use of grads.
+- Defined default version of MONAN-Model (0.5.0) and convert_mpas (0.1.0) in the installation step.
 
 
 ### Implementation at Egeon:
@@ -33,11 +33,17 @@ You will need to execute only 6 steps scripts, so you can run the Atmospheric MO
 
 **1. Install the model:**
 
-- First you need to get a **fork repository** in your github account of a MONAN oficial repo: `https://github.com/monanadmin/monan.git`
+- First you need to get a **fork repository** in your github account of a MONAN oficial repo: `https://github.com/monanadmin/MONAN-Model`. Attention! Uncheck "Copy the main branch only" in the fork creation step to copy all branches. 
 - The you can install the model in your work directory by running:
 
 ~~~
-1.install_monan.bash <https://github.com/MYUSER/MONAN-Model.git>
+./1.install_monan.bash <https://github.com/MYUSER/MONAN-Model-My-Fork.git> <OPTIONAL_tag_or_branch_name_MONAN-Model-My-Fork> <OPTIONAL_tag_or_branch_namer_Convert-MPAS>
+~~~
+
+Default values:
+~~~
+<OPTIONAL_tag_or_branch_name_MONAN-Model> = "0.5.0"
+<OPTIONAL_tag_or_branch_name_Convert-MPAS> = "1.0.0"
 ~~~
 
 - This first step will create a standart diretories structures for work:
@@ -113,21 +119,4 @@ FCST        :: Forecast hours, e.g.: 24 or 36, etc.
 
 24 hour forcast example:
 ./4.run_post.bash GFS 1024002 2024010100 24
-~~~
-
-**5. Run ate least one single simple precipitation forecast figure example:**
-
-- Execute the 5th step script:
-
-~~~
-5.run_products.bash EXP_NAME RESOLUTION LABELI FCST
-
-EXP_NAME    :: Forcing: GFS
-            :: Others options to be added later...
-RESOLUTION  :: number of points in resolution model grid, e.g: 1024002  (24 km)
-LABELI      :: Initial date YYYYMMDDHH, e.g.: 2024010100
-FCST        :: Forecast hours, e.g.: 24 or 36, etc.
-
-24 hour forcast example:
-./5.run_products.bash GFS 1024002 2024010100 24
 ~~~

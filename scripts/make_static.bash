@@ -84,7 +84,6 @@ done
 
 ln -sf ${DATAIN}/fixed/*.TBL ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/*.GFS ${SCRIPTS}
-ln -sf ${DATAIN}/fixed/Vtable.ERA-interim.pl ${SCRIPTS}
 ln -sf ${EXECS}/init_atmosphere_model ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.graph.info.part.${cores} ${SCRIPTS}
 ln -sf ${DATAIN}/fixed/x1.${RES}.grid.nc ${SCRIPTS}
@@ -157,6 +156,7 @@ chmod a+x ${SCRIPTS}/static.bash
 echo -e  "${GREEN}==>${NC} Executing sbatch static.bash...\n"
 cd ${SCRIPTS}
 sbatch --wait ${SCRIPTS}/static.bash
+mv ${SCRIPTS}/static.bash ${DATAOUT}/logs/
 
 if [ -s ${SCRIPTS}/x1.${RES}.static.nc ]
 then

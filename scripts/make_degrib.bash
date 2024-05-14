@@ -158,6 +158,7 @@ chmod a+x ${SCRIPTS}/degrib.bash
 echo -e  "${GREEN}==>${NC} Executing sbatch degrib.bash...\n"
 cd ${SCRIPTS}
 sbatch --wait ${SCRIPTS}/degrib.bash
+mv ${SCRIPTS}/degrib.bash ${DATAOUT}/${YYYYMMDDHHi}/Pre/logs
 
 
 
