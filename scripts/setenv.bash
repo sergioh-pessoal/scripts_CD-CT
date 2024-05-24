@@ -30,12 +30,12 @@ module list
 # Put your directories:
 export DIR_SCRIPTS=$(dirname $(dirname $(pwd)))
 export DIR_DADOS=$(dirname $(dirname $(pwd)))
-export MONANDIR=$MONANDIR
+export MONANDIR=/home/sergio.ferreira/DEV/GIT/MyFork2/scripts_CD-CT/sources/MONAN-Model_0.5.0
 
 # Submiting variables:
 
 # PRE-Static phase:
-export STATIC_QUEUE="batch"
+export STATIC_QUEUE="PESQ1"
 export STATIC_ncores=32
 export STATIC_nnodes=1
 export STATIC_ncpn=32
@@ -43,7 +43,7 @@ export STATIC_jobname="Pre.static"
 export STATIC_walltime="02:00:00"
 
 # PRE-Degrib phase:
-export DEGRIB_QUEUE="batch"
+export DEGRIB_QUEUE="PESQ1"
 export DEGRIB_ncores=1
 export DEGRIB_nnodes=1
 export DEGRIB_ncpn=1
@@ -51,7 +51,7 @@ export DEGRIB_jobname="Pre.degrib"
 export DEGRIB_walltime="00:30:00"
 
 # PRE-Init Atmosphere phase:
-export INITATMOS_QUEUE="batch"
+export INITATMOS_QUEUE="PESQ1"
 export INITATMOS_ncores=64
 export INITATMOS_nnodes=1
 export INITATMOS_ncpn=1
@@ -60,7 +60,7 @@ export INITATMOS_walltime="01:00:00"
 
 
 # Model phase:
-export MODEL_QUEUE=batch
+export MODEL_QUEUE=PESQ1
 export MODEL_ncores=512
 export MODEL_nnodes=4
 export MODEL_ncpn=128
@@ -69,7 +69,7 @@ export MODEL_walltime="8:00:00"
 
 
 # Post phase:
-export POST_QUEUE="batch"
+export POST_QUEUE="PESQ1"
 export POST_ncores=1
 export POST_nnodes=1
 export POST_ncpn=1
@@ -78,7 +78,7 @@ export POST_walltime="8:00:00"
 
 
 # Products phase:
-export PRODS_QUEUE="batch"
+export PRODS_QUEUE="PESQ1"
 export PRODS_ncores=1
 export PRODS_nnodes=1
 export PRODS_ncpn=1

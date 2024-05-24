@@ -119,7 +119,7 @@ cat > PostAtmos_exe.sh <<EOF0
 #!/bin/bash
 #SBATCH --job-name=PostAtmos
 #SBATCH --nodes=8
-#SBATCH --partition=batch 
+#SBATCH --partition=${POST_QUEUE}
 #SBATCH --tasks-per-node=32
 #SBATCH --time=4:00:00
 #SBATCH --output=${DATAOUT}/${YYYYMMDDHHi}/Post/logs/post.bash.o%j    # File name for standard output
